@@ -1,0 +1,220 @@
+{
+  "common": {
+    "appName": "AceIELTS",
+    "tagline": "Ace Your IELTS",
+    "help": "Help",
+    "language": "Language"
+  },
+  "landing": {
+    "hero": {
+      "badge": "IELTS Preparation",
+      "title": "Ace Your IELTS with",
+      "titleHighlight": "Smart Preparation",
+      "subtitle": "Comprehensive IELTS preparation for Listening, Reading, Writing, and Speaking. Get AI-powered feedback and targeted practice to achieve your target band score.",
+      "cta": "Start Preparing Now",
+      "secondaryCta": "Learn More",
+      "trust1": "Free to start",
+      "trust2": "No credit card required",
+      "previewSubtitle": "Your IELTS Dashboard",
+      "currentLevel": "Current Band",
+      "rating": "User Rating",
+      "improvement": "Avg. Score Improvement"
+    },
+    "features": {
+      "title": "Everything You Need to Ace IELTS",
+      "subtitle": "Comprehensive preparation tools designed to help you achieve your target IELTS band score efficiently.",
+      "tracking": {
+        "title": "Progress Tracking",
+        "description": "Monitor your improvement across all four IELTS skills with detailed analytics and band score predictions."
+      },
+      "ai": {
+        "title": "AI-Powered Feedback",
+        "description": "Get instant, examiner-style feedback on your Writing and Speaking practice sessions."
+      },
+      "practice": {
+        "title": "Targeted Practice",
+        "description": "Focus on your weak areas with IELTS-format exercises and full mock tests."
+      },
+      "vocabulary": {
+        "title": "IELTS Vocabulary",
+        "description": "Build essential IELTS vocabulary naturally while browsing with our browser extension."
+      }
+    },
+    "skills": {
+      "title": "Master All Four IELTS Skills",
+      "subtitle": "Our comprehensive approach ensures balanced preparation across Listening, Reading, Writing, and Speaking for the IELTS exam.",
+      "listening": "Practice with authentic IELTS-style audio materials including lectures, conversations, and monologues.",
+      "reading": "Improve your reading speed and accuracy with academic passages and IELTS question types.",
+      "writing": "Master Task 1 and Task 2 with structured practice, model answers, and detailed feedback.",
+      "speaking": "Build confidence with AI-powered mock speaking tests and pronunciation feedback."
+    },
+    "cta": {
+      "title": "Ready to Ace Your IELTS?",
+      "subtitle": "Join thousands of test-takers who have achieved their target band score with AceIELTS.",
+      "button": "Get Started Free"
+    },
+    "footer": {
+      "about": "About",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact",
+      "rights": "All rights reserved."
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "sectionSkills": "IELTS Skills",
+    "listening": "Listening",
+    "reading": "Reading",
+    "writing": "Writing",
+    "speaking": "Speaking",
+    "sectionResources": "Resources",
+    "vocabulary": "Vocabulary",
+    "grammar": "Grammar",
+    "mockTests": "Mock Tests",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "vocabulary": {
+    "pageTitle": "Vocabulary Books",
+    "myBooks": "My Books",
+    "systemBooks": "System Books",
+    "createBook": "Create Book",
+    "searchPlaceholder": "Search vocabulary books...",
+    "wordsCount": "{{count}} words",
+    "progress": "{{percent}}% mastered",
+    "lastStudied": "Last studied {{time}}",
+    "never": "Never studied",
+    "startLearning": "Start Learning",
+    "continueLearning": "Continue",
+    "bookDetail": {
+      "overview": "Overview",
+      "totalWords": "Total Words",
+      "mastered": "Mastered",
+      "learning": "Learning",
+      "new": "New",
+      "todayGoal": "Today's Goal",
+      "wordsToReview": "{{count}} words to review",
+      "newWordsToday": "{{count}} new words",
+      "estimatedTime": "~{{minutes}} min",
+      "startSession": "Start Learning Session",
+      "recentWords": "Recently Learned",
+      "difficult": "Difficult Words"
+    },
+    "learning": {
+      "wordCard": "Word Card",
+      "pronunciation": "Pronunciation",
+      "coreDefinition": "Core Definition",
+      "authenticContext": "Authentic Context",
+      "etymology": "Word Etymology",
+      "synonyms": "Synonyms",
+      "antonyms": "Antonyms",
+      "videoExamples": "Video Examples",
+      "prevNext": "prev / next example",
+      "spacedRepetition": "Spaced Repetition Grading",
+      "forgot": "Forgot",
+      "hard": "Hard",
+      "good": "Good",
+      "easy": "Easy",
+      "interval": {
+        "1m": "1m",
+        "10m": "10m",
+        "1d": "1d",
+        "4d": "4d"
+      },
+      "progress": "{{current}} / {{total}}",
+      "complete": "Session Complete!",
+      "wordsReviewed": "Words Reviewed",
+      "accuracy": "Accuracy",
+      "finishSession": "Finish Session"
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "encouragement": {
+      "streak_low": "Every journey begins with a single step. Keep practicing!",
+      "streak_medium": "You're building a great habit! Consistency is key to IELTS success.",
+      "streak_high": "Amazing dedication! Your IELTS preparation is on track.",
+      "streak_legendary": "Unstoppable! You're well on your way to acing the IELTS!"
+    },
+    "streakMessage": "{{count}} days of consistent practice",
+    "streakDays": "{{count}} days",
+    "streakLabel": "of consistent practice",
+    "studyHours": "{{hours}}h",
+    "studyTimeLabel": "total study time",
+    "streakFire": "You're on fire! 🔥",
+    "currentLevel": "Current Band",
+    "currentScore": "Current Score",
+    "levelLabel": "Band {{band}}",
+    "levelDescription": {
+      "4": "Limited User — Basic competence in familiar situations",
+      "4.5": "Limited User — Improving gradually with limited vocabulary",
+      "5": "Modest User — Partial command, can handle basic communication",
+      "5.5": "Modest User — Growing competence in routine situations",
+      "6": "Competent User — Generally effective despite some inaccuracies",
+      "6.5": "Competent User — Good command with occasional errors",
+      "7": "Good User — Operational command with occasional inaccuracies",
+      "7.5": "Good User — Strong command, minor errors in unfamiliar contexts",
+      "8": "Very Good User — Fully operational command, rare inaccuracies",
+      "8.5": "Very Good User — Exceptional command in all contexts",
+      "9": "Expert User — Full operational command, native-like proficiency"
+    },
+    "progressToGoal": "Progress to Band {{goal}}",
+    "estimatedTime": "~{{weeks}} weeks to next band",
+    "estimatedTimeMonths": "~{{months}} months to next band",
+    "keepPace": "at current pace",
+    "goalBand": "Target: Band {{band}}",
+    "totalStudyTime": "{{hours}}h total study time",
+    "dayStreak": "{{count}} Day Streak",
+    "today": "Today",
+    "minutes": "{{count}} min",
+    "inflection": "Today's Tasks",
+    "todaysFocus": "Today's Focus",
+    "minutesShort": "min",
+    "startPractice": "Start Practice",
+    "skillsBreakdown": "Skills Breakdown",
+    "takeaway": "Progress Summary",
+    "wordsViewed": "Words",
+    "articlesRead": "Articles",
+    "videosWatched": "Videos",
+    "browsingHistory": "Browsing History",
+    "recentActivity": "Recent Activity",
+    "historyTypes": {
+      "word": "Word",
+      "article": "Article",
+      "video": "Video"
+    },
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "blog": {
+      "title": "IELTS Tips & Articles",
+      "readTime": "{{count}} min read",
+      "viewAll": "View All Articles"
+    },
+    "skills": {
+      "listening": "Listening",
+      "reading": "Reading",
+      "writing": "Writing",
+      "speaking": "Speaking"
+    },
+    "timeRanges": {
+      "day": "D",
+      "week": "W",
+      "month": "M",
+      "all": "All"
+    },
+    "taskTypes": {
+      "writing": "Writing",
+      "vocabulary": "Vocabulary",
+      "reading": "Reading"
+    },
+    "loading": "Loading dashboard...",
+    "error": "Oops! Something went wrong"
+  }
+}

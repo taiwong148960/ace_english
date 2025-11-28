@@ -1,0 +1,37 @@
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+/**
+ * Utility function to merge Tailwind CSS classes with clsx
+ * Handles conditional classes and prevents class conflicts
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+/**
+ * Format large numbers with commas (e.g., 1234 -> 1,234)
+ */
+export function formatNumber(num: number): string {
+  return num.toLocaleString()
+}
+
+/**
+ * Get greeting based on current time
+ */
+export function getGreeting(): string {
+  const hour = new Date().getHours()
+  if (hour < 12) return "morning"
+  if (hour < 18) return "afternoon"
+  return "evening"
+}
+
+/**
+ * Simulate API delay for realistic loading states
+ */
+export function withDelay<T>(data: T, delayMs: number = 500): Promise<T> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(data), delayMs)
+  })
+}
+

@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ace-ielts/core": ["../../packages/core/src"],
+      "@ace-ielts/core/*": ["../../packages/core/src/*"],
+      "@ace-ielts/ui": ["../../packages/ui/src"],
+      "@ace-ielts/ui/*": ["../../packages/ui/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

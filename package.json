@@ -1,0 +1,33 @@
+{
+  "name": "ace-ielts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AceIELTS - IELTS Preparation App (Monorepo)",
+  "author": "AceIELTS Team",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "app/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter @ace-ielts/web dev",
+    "dev:extension": "pnpm --filter @ace-ielts/extension dev",
+    "build:web": "pnpm --filter @ace-ielts/web build",
+    "build:extension": "pnpm --filter @ace-ielts/extension build",
+    "build:all": "pnpm -r build",
+    "package:extension": "pnpm --filter @ace-ielts/extension package",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r clean && rimraf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
