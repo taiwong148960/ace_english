@@ -1,0 +1,108 @@
+{
+  "common": {
+    "appName": "AceEnglish",
+    "help": "帮助",
+    "language": "语言"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "sectionSkills": "技能",
+    "listening": "听力",
+    "reading": "阅读",
+    "writing": "写作",
+    "speaking": "口语",
+    "sectionResources": "学习资源",
+    "vocabulary": "词汇",
+    "grammar": "语法",
+    "mockTests": "模拟测试",
+    "profile": "个人资料",
+    "settings": "设置"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "早上好",
+      "afternoon": "下午好",
+      "evening": "晚上好"
+    },
+    "encouragement": {
+      "streak_low": "万事开头难，坚持就是胜利！",
+      "streak_medium": "很棒！你正在养成一个好习惯，继续保持！",
+      "streak_high": "太厉害了！你的坚持正在开花结果！",
+      "streak_legendary": "学习达人！你的毅力令人钦佩！"
+    },
+    "streakMessage": "已连续学习 {{count}} 天",
+    "streakDays": "{{count}} 天",
+    "streakLabel": "连续学习",
+    "studyHours": "{{hours}}小时",
+    "studyTimeLabel": "累计学习时长",
+    "streakFire": "状态火热！🔥",
+    "currentLevel": "当前等级",
+    "currentScore": "当前分数",
+    "levelLabel": "Band {{band}}",
+    "levelDescription": {
+      "4": "基础水平 — 能在熟悉情境下进行有限交流",
+      "4.5": "基础水平 — 正在稳步提升，打好语言基础",
+      "5": "中等偏下 — 日常交流基本胜任，复杂场景有困难",
+      "5.5": "中等偏下 — 日常沟通逐渐自如",
+      "6": "合格水平 — 能进行基本的日常和工作交流",
+      "6.5": "合格水平 — 日常及职场沟通较为流畅",
+      "7": "良好水平 — 能处理复杂语言，偶有小错",
+      "7.5": "良好水平 — 语言功底扎实，不熟悉话题偶有瑕疵",
+      "8": "优秀水平 — 接近母语者，极少出错",
+      "8.5": "优秀水平 — 各种场景都能驾驭自如",
+      "9": "专家水平 — 完全掌握，堪比母语者"
+    },
+    "progressToGoal": "距离目标 Band {{goal}}",
+    "estimatedTime": "预计还需 ~{{weeks}} 周",
+    "estimatedTimeMonths": "预计还需 ~{{months}} 个月",
+    "keepPace": "按当前进度",
+    "goalBand": "目标：Band {{band}}",
+    "totalStudyTime": "累计学习 {{hours}} 小时",
+    "dayStreak": "连续 {{count}} 天",
+    "today": "今天",
+    "minutes": "{{count}} 分钟",
+    "inflection": "今日任务",
+    "todaysFocus": "今日焦点",
+    "minutesShort": "分钟",
+    "startPractice": "开始练习",
+    "skillsBreakdown": "技能分析",
+    "takeaway": "学习统计",
+    "wordsViewed": "单词",
+    "articlesRead": "文章",
+    "videosWatched": "视频",
+    "browsingHistory": "浏览记录",
+    "recentActivity": "近期活动",
+    "historyTypes": {
+      "word": "单词",
+      "article": "文章",
+      "video": "视频"
+    },
+    "justNow": "刚刚",
+    "minutesAgo": "{{count}}分钟前",
+    "hoursAgo": "{{count}}小时前",
+    "daysAgo": "{{count}}天前",
+    "blog": {
+      "title": "最新文章",
+      "readTime": "{{count}} 分钟阅读",
+      "viewAll": "查看全部文章"
+    },
+    "skills": {
+      "listening": "听力",
+      "reading": "阅读",
+      "writing": "写作",
+      "speaking": "口语"
+    },
+    "timeRanges": {
+      "day": "日",
+      "week": "周",
+      "month": "月",
+      "all": "全部"
+    },
+    "taskTypes": {
+      "writing": "写作",
+      "vocabulary": "词汇",
+      "reading": "阅读"
+    }
+  }
+}
+

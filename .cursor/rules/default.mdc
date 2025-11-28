@@ -1,0 +1,94 @@
+---
+alwaysApply: true
+---
+
+# Role & Context
+You are an expert Full-Stack Developer specialized in the **Plasmo** framework (React 18+), building the "AceEnglish" web application and Chrome extension.
+
+# Tech Stack & Libraries
+- **Framework:** Plasmo (React 18) / Next.js (if applicable for web target)
+- **Language:** TypeScript (Strict Mode)
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui (Radix UI base)
+- **Icons:** Lucide React
+- **Animations:** Framer Motion
+- **Charts:** Recharts
+- **State/Backend:** Supabase (PostgreSQL, Auth, Edge Functions)
+- **I18n:** react-i18next
+
+# Core Development Principles
+1. **SOLID Principles:** Strictly adhere to SOLID principles.
+2. **Modularity:** Ensure code is modular to support multi-platform adaptation (Web & Extension).
+3. **Type Safety:** No `any`. Define explicit interfaces for all props and data.
+4. **Functional Components:** Use React hooks and functional components only.
+
+# UI & Implementation Rules
+
+## 1. Component Selection (Strict Hierarchy)
+- **Primary:** Use **shadcn/ui** components for all standard UI elements.
+- **Secondary:** If missing in shadcn, look for **Radix UI** primitives.
+- **Prohibited:** DO NOT write complex native DOM components (Modals, Dropdowns, Date Pickers) from scratch.
+
+## 2. Visual Style & Tailwind Config
+- **Primary Color:** `#0E7569` (Teal/Emerald range). Use `bg-primary` or equivalent in Tailwind config.
+- **Font:** `Plus Jakarta Sans` (Sans), `DM Serif Display` (Headings).
+- **Radius:** Default radius is `0.5rem` (8px/sm) or `0.75rem` (12px/md).
+- **Shadows:** Use subtle shadows for depth (Card style).
+
+## 3. Assets & Media
+- **Icons:** Use **Lucide React** exclusively. Import pattern: `import { IconName } from "lucide-react"`.
+- **Charts:** Use **Recharts** for all data visualization.
+- **No Manual SVGs:** Do not create inline SVGs unless it is the Brand Logo.
+
+## 4. Animation (Framer Motion)
+- Use `framer-motion` for interactions.
+- Avoid complex CSS `@keyframes`.
+- Standard transition: `duration-200 ease-out`.
+- Common variants: `FadeIn`, `SlideIn`, `ScaleIn` (see Design Tokens).
+
+## 5. Internationalization
+- All user-facing text MUST be wrapped in `t()` from `useTranslation`.
+- Example: `<span>{t('welcome_message')}</span>` NOT `<span>Welcome</span>`.
+
+# Design System Tokens (AceEnglish)
+
+Refer to these specific values when styling components:
+
+## Color Palette
+- **Primary Main:** `#0E7569` (Tailwind: `primary`)
+- **Primary Hover:** `#0B5C52`
+- **Background:** `#F8F9FA` (Neutral/Gray-50)
+- **Card Bg:** `#FFFFFF`
+- **Text Primary:** `#1F2937` (Gray-800)
+- **Text Secondary:** `#6B7280` (Gray-500)
+- **Accents:**
+  - Listening: `#5B8FD9`
+  - Reading: `#4CAF85`
+  - Writing: `#9575CD`
+  - Speaking: `#D4A054`
+
+## Typography
+- **Display:** 48px, Bold (700), `DM Serif Display`
+- **H1:** 28px, Bold (700)
+- **H2:** 20px, SemiBold (600)
+- **Body:** 14px, Regular (400)
+- **Small:** 12px, Medium (500)
+
+## Spacing & Layout
+- **Base Unit:** 8px
+- **Card Padding:** 24px (`p-6`)
+- **Gap:** 24px (`gap-6`)
+- **Sidebar Width:** 260px
+
+## Component Specifics
+- **Buttons:**
+  - Default: bg-[#0E7569] text-white hover:bg-[#0B5C52] rounded-md px-5 py-2.5
+  - Ghost: text-[#6B7280] hover:bg-[#E0F7FA] hover:text-[#0E7569]
+- **Cards:**
+  - Bg: White
+  - Shadow: `0px 1px 3px rgba(0,0,0,0.04)`
+  - Border: None (unless specified)
+  - Radius: 12px (`rounded-xl`)
+- **Input Focus Ring:**
+  - Color: `#0E7569`
+  - Style: `ring-2 ring-primary ring-offset-2`

@@ -1,0 +1,108 @@
+{
+  "common": {
+    "appName": "AceEnglish",
+    "help": "Help",
+    "language": "Language"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "sectionSkills": "Skills",
+    "listening": "Listening",
+    "reading": "Reading",
+    "writing": "Writing",
+    "speaking": "Speaking",
+    "sectionResources": "Resources",
+    "vocabulary": "Vocabulary",
+    "grammar": "Grammar",
+    "mockTests": "Mock Tests",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "encouragement": {
+      "streak_low": "Every journey begins with a single step. Keep going!",
+      "streak_medium": "You're building a great habit! Consistency is key to success.",
+      "streak_high": "Amazing dedication! Your persistence is truly paying off.",
+      "streak_legendary": "Unstoppable! You're an inspiration to language learners everywhere!"
+    },
+    "streakMessage": "{{count}} days of consistent learning",
+    "streakDays": "{{count}} days",
+    "streakLabel": "of consistent learning",
+    "studyHours": "{{hours}}h",
+    "studyTimeLabel": "total study time",
+    "streakFire": "You're on fire! 🔥",
+    "currentLevel": "Current Level",
+    "currentScore": "Current Score",
+    "levelLabel": "Band {{band}}",
+    "levelDescription": {
+      "4": "Basic User — Can handle familiar situations with limited vocabulary",
+      "4.5": "Basic User — Improving gradually, building foundational skills",
+      "5": "Modest User — Competent in everyday situations with some limitations",
+      "5.5": "Modest User — Growing confidence in routine communications",
+      "6": "Competent User — Effective in familiar contexts, handles basic work scenarios",
+      "6.5": "Competent User — Good for daily and professional communication",
+      "7": "Good User — Handles complex language well with occasional inaccuracies",
+      "7.5": "Good User — Strong command, minor errors in unfamiliar contexts",
+      "8": "Very Good User — Near-native fluency, rare inaccuracies",
+      "8.5": "Very Good User — Exceptional command in all contexts",
+      "9": "Expert User — Full operational command, native-like proficiency"
+    },
+    "progressToGoal": "Progress to Band {{goal}}",
+    "estimatedTime": "~{{weeks}} weeks to next band",
+    "estimatedTimeMonths": "~{{months}} months to next band",
+    "keepPace": "at current pace",
+    "goalBand": "Target: Band {{band}}",
+    "totalStudyTime": "{{hours}}h total study time",
+    "dayStreak": "{{count}} Day Streak",
+    "today": "Today",
+    "minutes": "{{count}} min",
+    "inflection": "Inflection",
+    "todaysFocus": "Today's Focus",
+    "minutesShort": "min",
+    "startPractice": "Start Practice",
+    "skillsBreakdown": "Skills Breakdown",
+    "takeaway": "Takeaway",
+    "wordsViewed": "Words",
+    "articlesRead": "Articles",
+    "videosWatched": "Videos",
+    "browsingHistory": "Browsing History",
+    "recentActivity": "Recent Activity",
+    "historyTypes": {
+      "word": "Word",
+      "article": "Article",
+      "video": "Video"
+    },
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "blog": {
+      "title": "Latest Articles",
+      "readTime": "{{count}} min read",
+      "viewAll": "View All Articles"
+    },
+    "skills": {
+      "listening": "Listening",
+      "reading": "Reading",
+      "writing": "Writing",
+      "speaking": "Speaking"
+    },
+    "timeRanges": {
+      "day": "D",
+      "week": "W",
+      "month": "M",
+      "all": "All"
+    },
+    "taskTypes": {
+      "writing": "Writing",
+      "vocabulary": "Vocabulary",
+      "reading": "Reading"
+    }
+  }
+}
+
