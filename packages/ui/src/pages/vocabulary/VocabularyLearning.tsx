@@ -1,5 +1,5 @@
 /**
- * Vocabulary Learning Page - 学习页面
+ * Vocabulary Learning Page
  * Word card learning interface with spaced repetition grading
  * Based on prototype design (CogniWord reference)
  */
@@ -61,7 +61,7 @@ const mockCurrentWord: WordData = {
   phonetic: "/prəˈkræstɪneɪt/",
   partOfSpeech: "v.",
   definition: "(often to) delay or postpone action; put off doing something.",
-  definitionCn: "（往往指因为不四种别的原因而）拖延，耽搁",
+  definitionCn: "To delay or postpone doing something, often due to various reasons.",
   etymology: {
     breakdown: "pro- (forward) + crastinus (of tomorrow)",
     meaning: "= push to tomorrow"
@@ -73,13 +73,13 @@ const mockCurrentWord: WordData = {
       source: "The New York Times (Work-Life Section)",
       sourceType: "news",
       text: '"Psychologists say we often procrastinate not because we are lazy, but because we are managing negative moods like anxiety."',
-      translation: "（往往指因为不四种别的原因而）拖延，耽搁"
+      translation: "Psychologists suggest that procrastination is often not about laziness, but about managing negative emotions like anxiety."
     },
     {
       source: "Friends S02E05",
       sourceType: "media",
       text: '"I\'m gonna go procrastinate by cleaning my apartment."',
-      translation: "我想是一个笔僮了拖区的再去挣了。"
+      translation: "I'm going to procrastinate by cleaning my apartment instead."
     }
   ]
 }

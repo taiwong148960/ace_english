@@ -1,5 +1,5 @@
 /**
- * Vocabulary Book Detail Page - 词本学习进度和概况
+ * Vocabulary Book Detail Page
  * Shows learning progress, statistics, and provides entry to learning session
  */
 

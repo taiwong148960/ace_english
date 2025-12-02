@@ -1,5 +1,5 @@
 /**
- * Vocabulary Books Page - 词本管理
+ * Vocabulary Books Page
  * Displays all vocabulary books (user's and system) with search and navigation
  */
 
