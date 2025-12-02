@@ -30,6 +30,21 @@ export {
   DropdownMenuRadioGroup
 } from "./dropdown-menu"
 export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription
+} from "./dialog"
+export { Input } from "./input"
+export { Label, type LabelProps } from "./label"
+export { Textarea } from "./textarea"
+export {
   motion,
   fadeInUp,
   fadeIn,

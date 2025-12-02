@@ -34,3 +34,21 @@ export {
   onAuthStateChange
 } from "./auth"
 
+// Vocabulary
+export {
+  vocabularyApi,
+  getSystemBooks,
+  getUserBooks,
+  getUserBooksWithProgress,
+  getSystemBooksWithProgress,
+  getBookById,
+  createBook,
+  updateBook,
+  deleteBook,
+  getBookWords,
+  addWords,
+  deleteWord,
+  getBookProgress
+} from "./vocabulary"
+export type { IVocabularyApi } from "./vocabulary"
+

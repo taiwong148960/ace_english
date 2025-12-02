@@ -12,6 +12,23 @@ export type {
 } from "./auth"
 export { userToProfile } from "./auth"
 
+// Vocabulary types
+export type {
+  VocabularyBookType,
+  WordMasteryLevel,
+  VocabularyBook,
+  VocabularyWord,
+  UserWordProgress,
+  UserBookProgress,
+  VocabularyBookWithProgress,
+  VocabularyWordWithProgress,
+  CreateVocabularyBookInput,
+  UpdateVocabularyBookInput,
+  SpacedRepetitionGrade,
+  ReviewResult
+} from "./vocabulary"
+export { BOOK_COVER_COLORS, DEFAULT_BOOK_COVER_COLOR } from "./vocabulary"
+
 /**
  * User profile information
  */
