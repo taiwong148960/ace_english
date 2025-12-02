@@ -1,0 +1,46 @@
+---
+alwaysApply: true
+---
+
+# Project Context & Deployment Rules
+
+## 1. Infrastructure & Tech Stack
+- **Code Hosting:** GitHub
+- **Frontend Deployment:** Vercel
+- **Backend/Database:** Supabase
+- **Project Name/Context:** Ace IELTS
+
+## 2. Environments & URLs
+Always use the correct base URL based on the environment (Development vs. Production).
+
+| Environment | URL | Description |
+| :--- | :--- | :--- |
+| **Production** | `https://www.ace-ielts.net` | Live site (Vercel) |
+| **Development** | `https://localhost:3000` | Local testing |
+
+## 3. Deployment Workflow Rules
+
+### GitHub (Source Control)
+- **Main Branch:** The `main` branch is the source of truth for Production.
+- **Triggers:** Pushing to the `main` branch automatically triggers a Vercel deployment.
+- **PRs:** Feature branches should be merged into `main` via Pull Requests.
+
+### Vercel (Frontend)
+- **Configuration:** Ensure `vercel.json` (if present) or Project Settings match the build command (typically `npm run build` or `pnpm build`).
+- **Environment Variables:**
+  - NEVER hardcode secrets in the frontend code.
+  - Access variables via standard framework prefixes (e.g., `NEXT_PUBLIC_` for Next.js or `VITE_` for Vite) to distinguish between client-side and server-side secrets.
+  - Ensure Vercel Project Settings have the correct Production Environment Variables set.
+
+### Supabase (Backend)
+- **Connection:** The frontend connects to Supabase using the Project URL and Anon Key.
+- **CORS Configuration:** Ensure Supabase Auth settings allow the following Redirect URLs:
+  - `https://localhost:3000/**`
+  - `https://www.ace-ielts.net/**`
+- **Migrations:** Database schema changes should be managed via Supabase Migrations, not made directly in the production dashboard whenever possible.
+
+## 4. Coding Standards for Deployment
+
+### Environment Variable Handling
+- **Dynamic URLs:** Do not hardcode `https://www.ace-ielts.net` or `localhost:3000` in fetch/axios calls.
+- **Implementation:** Use a helper or config file to determine the `BASE_URL`
