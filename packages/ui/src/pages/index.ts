@@ -9,4 +9,6 @@ export {
   VocabularyBookDetail,
   VocabularyLearning
 } from "./vocabulary"
+export { Login } from "./Login"
+export { AuthCallback } from "./AuthCallback"
 

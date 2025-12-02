@@ -23,3 +23,12 @@ export {
   usePlatformType
 } from "./context"
 
+// Auth context and hooks
+export {
+  AuthProvider,
+  AuthContext,
+  useAuth,
+  useIsAuthenticated,
+  useUser
+} from "./auth-context"
+

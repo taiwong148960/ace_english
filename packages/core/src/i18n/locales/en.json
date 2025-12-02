@@ -5,6 +5,30 @@
     "help": "Help",
     "language": "Language"
   },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "signInToContinue": "Sign in to continue your IELTS preparation",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGithub": "Continue with GitHub",
+    "secureLogin": "Secure login",
+    "termsAgreement": "By continuing, you agree to our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "backToHome": "Back to home",
+    "signingIn": "Signing you in...",
+    "pleaseWait": "Please wait while we verify your account",
+    "loginSuccess": "Login successful!",
+    "redirecting": "Redirecting to your dashboard...",
+    "loginFailed": "Login failed",
+    "tryAgain": "Try again",
+    "signOut": "Sign out",
+    "error": {
+      "loginFailed": "Failed to sign in. Please try again.",
+      "callbackFailed": "Authentication failed. Please try again.",
+      "unknown": "An unknown error occurred"
+    }
+  },
   "landing": {
     "hero": {
       "badge": "IELTS Preparation",

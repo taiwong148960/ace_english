@@ -15,6 +15,8 @@ const buttonVariants = cva(
         default: "bg-primary text-white hover:bg-primary-hover",
         secondary:
           "bg-neutral-card text-text-primary border border-neutral-border hover:bg-neutral-background",
+        outline:
+          "border border-neutral-border bg-white text-text-primary hover:bg-neutral-background",
         ghost: "hover:bg-accent-blue hover:text-primary",
         link: "text-primary underline-offset-4 hover:underline"
       },

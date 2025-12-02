@@ -5,6 +5,30 @@
     "help": "帮助",
     "language": "语言"
   },
+  "auth": {
+    "welcomeBack": "欢迎回来",
+    "signInToContinue": "登录以继续你的雅思备考之旅",
+    "continueWithGoogle": "使用 Google 登录",
+    "continueWithGithub": "使用 GitHub 登录",
+    "secureLogin": "安全登录",
+    "termsAgreement": "继续即表示您同意我们的",
+    "termsOfService": "服务条款",
+    "and": "和",
+    "privacyPolicy": "隐私政策",
+    "backToHome": "返回首页",
+    "signingIn": "正在登录...",
+    "pleaseWait": "请稍候，正在验证您的账户",
+    "loginSuccess": "登录成功！",
+    "redirecting": "正在跳转到仪表盘...",
+    "loginFailed": "登录失败",
+    "tryAgain": "重试",
+    "signOut": "退出登录",
+    "error": {
+      "loginFailed": "登录失败，请重试。",
+      "callbackFailed": "认证失败，请重试。",
+      "unknown": "发生未知错误"
+    }
+  },
   "landing": {
     "hero": {
       "badge": "雅思备考",

@@ -3,6 +3,15 @@
  * These types define the data structures used throughout the app
  */
 
+// Auth types
+export type {
+  OAuthProvider,
+  AuthState,
+  AuthContextValue,
+  AppUserProfile
+} from "./auth"
+export { userToProfile } from "./auth"
+
 /**
  * User profile information
  */

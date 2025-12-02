@@ -3,7 +3,9 @@ import ReactDOM from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import {
   PlatformProvider,
-  setLanguageStorageAdapter
+  setLanguageStorageAdapter,
+  AuthProvider,
+  initializeSupabase
 } from "@ace-ielts/core"
 import "@ace-ielts/core/i18n"
 
@@ -14,11 +16,26 @@ import { webPlatformContext, webLanguageStorageAdapter } from "./adapters"
 // Configure i18n with web storage
 setLanguageStorageAdapter(webLanguageStorageAdapter)
 
+// Initialize Supabase with environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (supabaseUrl && supabaseAnonKey) {
+  initializeSupabase({
+    supabaseUrl,
+    supabaseAnonKey
+  })
+} else {
+  console.warn("Supabase environment variables not configured. Auth will not work.")
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <PlatformProvider context={webPlatformContext}>
       <BrowserRouter>
-        <App />
+        <AuthProvider redirectTo={`${window.location.origin}/auth/callback`}>
+          <App />
+        </AuthProvider>
       </BrowserRouter>
     </PlatformProvider>
   </React.StrictMode>

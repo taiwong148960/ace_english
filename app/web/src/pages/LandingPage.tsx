@@ -122,7 +122,7 @@ function Header() {
             <LanguageSwitcher />
             <Button
               size="sm"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/login")}
               className="hidden sm:flex"
             >
               {t("landing.hero.cta")}
@@ -195,7 +195,7 @@ function HeroSection() {
             <div className="flex flex-wrap gap-4 mb-10">
               <Button
                 size="lg"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/login")}
                 className="gap-2 px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-shadow"
               >
                 {t("landing.hero.cta")}
@@ -496,7 +496,7 @@ function CTASection() {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/login")}
             className="gap-2 px-10 py-6 text-lg bg-white text-primary hover:bg-white/90 shadow-xl"
           >
             {t("landing.cta.button")}

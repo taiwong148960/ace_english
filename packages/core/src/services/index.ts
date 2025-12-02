@@ -16,3 +16,21 @@ export {
   mockBlogArticles
 } from "./mock-data"
 
+// Supabase
+export {
+  initializeSupabase,
+  getSupabase,
+  isSupabaseInitialized,
+  type SupabaseConfig
+} from "./supabase"
+
+// Auth
+export {
+  signInWithOAuth,
+  signOut,
+  getSession,
+  getCurrentUser,
+  refreshSession,
+  onAuthStateChange
+} from "./auth"
+
