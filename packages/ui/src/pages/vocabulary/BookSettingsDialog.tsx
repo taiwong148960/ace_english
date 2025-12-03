@@ -8,9 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Settings, Loader2, AlertCircle, X } from "lucide-react"
 import {
   useTranslation,
-  getBookSettings,
-  updateBookSettings,
-  type UpdateBookSettingsInput,
+  useBookSettings,
   type StudyOrder,
   type LearningMode
 } from "@ace-ielts/core"
@@ -46,39 +44,35 @@ export function BookSettingsDialog({
 }: BookSettingsDialogProps) {
   const { t } = useTranslation()
 
-  // Form state
+  // Use TanStack Query hook for fetching and updating settings
+  const {
+    settings,
+    isLoading,
+    error: fetchError,
+    updateSettings,
+    isUpdating
+  } = useBookSettings({
+    userId,
+    bookId,
+    enabled: open
+  })
+
+  // Form state (local until submitted)
   const [dailyNewLimit, setDailyNewLimit] = useState(20)
   const [dailyReviewLimit, setDailyReviewLimit] = useState(60)
   const [learningMode, setLearningMode] = useState<LearningMode>("read_only")
   const [studyOrder, setStudyOrder] = useState<StudyOrder>("sequential")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Load settings when dialog opens
+  // Sync form state with fetched settings
   useEffect(() => {
-    if (open && userId && bookId) {
-      loadSettings()
-    }
-  }, [open, userId, bookId])
-
-  const loadSettings = async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const settings = await getBookSettings(userId, bookId)
+    if (settings) {
       setDailyNewLimit(settings.daily_new_limit)
       setDailyReviewLimit(settings.daily_review_limit)
       setLearningMode(settings.learning_mode)
       setStudyOrder(settings.study_order)
-    } catch (err) {
-      console.error("Error loading settings:", err)
-      setError(t("vocabulary.settings.errors.loadFailed"))
-    } finally {
-      setIsLoading(false)
     }
-  }
+  }, [settings])
 
   // Auto-update review limit when new limit changes (3x multiplier)
   const handleNewLimitChange = (value: string) => {
@@ -110,17 +104,13 @@ export function BookSettingsDialog({
       return
     }
 
-    setIsSaving(true)
-
     try {
-      const input: UpdateBookSettingsInput = {
+      await updateSettings({
         daily_new_limit: dailyNewLimit,
         daily_review_limit: dailyReviewLimit,
         learning_mode: learningMode,
         study_order: studyOrder
-      }
-
-      await updateBookSettings(userId, bookId, input)
+      })
 
       // Close dialog and notify parent
       onOpenChange(false)
@@ -128,8 +118,6 @@ export function BookSettingsDialog({
     } catch (err) {
       console.error("Error saving settings:", err)
       setError(t("vocabulary.settings.errors.saveFailed"))
-    } finally {
-      setIsSaving(false)
     }
   }
 
@@ -158,6 +146,13 @@ export function BookSettingsDialog({
           <div className="flex items-center justify-center py-12 flex-1">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
+        ) : fetchError ? (
+          <div className="flex items-center justify-center py-12 flex-1">
+            <div className="text-center">
+              <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+              <p className="text-red-600">{t("vocabulary.settings.errors.loadFailed")}</p>
+            </div>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
             <div className="overflow-y-auto flex-1 space-y-6 mt-4 pr-2 -mr-2">
@@ -180,7 +175,7 @@ export function BookSettingsDialog({
                     max="200"
                     value={dailyNewLimit}
                     onChange={(e) => handleNewLimitChange(e.target.value)}
-                    disabled={isSaving}
+                    disabled={isUpdating}
                     className="flex-1"
                   />
                 </div>
@@ -210,7 +205,7 @@ export function BookSettingsDialog({
                         setDailyReviewLimit(numValue)
                       }
                     }}
-                    disabled={isSaving}
+                    disabled={isUpdating}
                     className="flex-1"
                   />
                 </div>
@@ -235,7 +230,7 @@ export function BookSettingsDialog({
                 onValueChange={(value) => {
                   if (value) setLearningMode(value as LearningMode)
                 }}
-                disabled={isSaving}
+                disabled={isUpdating}
                 className="w-full"
               >
                 <ToggleGroupItem value="read_only" aria-label="Read Only">
@@ -264,7 +259,7 @@ export function BookSettingsDialog({
                 onValueChange={(value) => {
                   if (value) setStudyOrder(value as StudyOrder)
                 }}
-                disabled={isSaving}
+                disabled={isUpdating}
                 className="w-full"
               >
                 <ToggleGroupItem value="sequential" aria-label="Sequential">
@@ -307,12 +302,12 @@ export function BookSettingsDialog({
                 type="button"
                 variant="outline"
                 onClick={() => handleOpenChange(false)}
-                disabled={isSaving}
+                disabled={isUpdating}
               >
                 {t("vocabulary.settings.cancel")}
               </Button>
-              <Button type="submit" disabled={isSaving} className="gap-2">
-                {isSaving ? (
+              <Button type="submit" disabled={isUpdating} className="gap-2">
+                {isUpdating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     {t("vocabulary.settings.saving")}
@@ -330,4 +325,3 @@ export function BookSettingsDialog({
 }
 
 export default BookSettingsDialog
-

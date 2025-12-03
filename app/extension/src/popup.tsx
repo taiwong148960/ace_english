@@ -5,15 +5,23 @@ import {
   PlatformProvider, 
   useTranslation,
   setLanguageStorageAdapter,
-  initI18nWithStorage
+  initI18nWithStorage,
+  QueryClientProvider
 } from "@ace-ielts/core"
 import { Button } from "@ace-ielts/ui"
 
 import "./styles/globals.css"
-import { extensionPlatformContext, extensionLanguageStorageAdapter } from "./adapters"
+import { 
+  extensionPlatformContext, 
+  extensionLanguageStorageAdapter,
+  createExtensionQueryClient 
+} from "./adapters"
 
 // Configure i18n with extension storage
 setLanguageStorageAdapter(extensionLanguageStorageAdapter)
+
+// Create QueryClient instance for popup
+const queryClient = createExtensionQueryClient()
 
 /**
  * Popup content component
@@ -94,11 +102,12 @@ function PopupContent() {
  */
 function Popup() {
   return (
-    <PlatformProvider context={extensionPlatformContext}>
-      <PopupContent />
-    </PlatformProvider>
+    <QueryClientProvider client={queryClient}>
+      <PlatformProvider context={extensionPlatformContext}>
+        <PopupContent />
+      </PlatformProvider>
+    </QueryClientProvider>
   )
 }
 
 export default Popup
-

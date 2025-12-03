@@ -3,16 +3,15 @@
  * Uses platform adapters for cross-platform compatibility
  */
 
-import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import {
-  dashboardApi,
   useNavigation,
   useTranslation,
   useAuth,
   userToProfile,
+  useDashboardData,
+  useTakeawayStats,
   type BlogArticle,
-  type DashboardData,
   type TakeawayStats
 } from "@ace-ielts/core"
 
@@ -58,52 +57,32 @@ export function Dashboard() {
   const { t } = useTranslation()
   const navigation = useNavigation()
   const { user: authUser } = useAuth()
-  
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dashboardData = await dashboardApi.getDashboardData()
-        
-        // If user is authenticated, merge real user data with dashboard data
-        if (authUser) {
-          const profile = userToProfile(authUser)
-          dashboardData.user = {
-            ...dashboardData.user,
-            id: profile.id,
-            name: profile.name,
-            email: profile.email,
-            avatarUrl: profile.avatarUrl || undefined
-          }
-        }
-        
-        setData(dashboardData)
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : t("dashboard.failedToLoad")
-        )
-      }
-    }
+  // Use TanStack Query hooks for data fetching
+  const { data, isLoading, error } = useDashboardData()
+  const { fetchStats } = useTakeawayStats()
 
-    fetchData()
-  }, [t, authUser])
+  // Merge real user data with dashboard data if authenticated
+  const dashboardData = data ? {
+    ...data,
+    user: authUser ? {
+      ...data.user,
+      id: authUser.id,
+      name: userToProfile(authUser).name,
+      email: userToProfile(authUser).email,
+      avatarUrl: userToProfile(authUser).avatarUrl || undefined
+    } : data.user
+  } : null
 
   const handleTimeRangeChange = async (
     range: TakeawayStats["timeRange"]
   ): Promise<TakeawayStats> => {
-    return dashboardApi.getTakeawayStats(range)
+    return fetchStats(range)
   }
 
-  const handleTaskToggle = (taskId: string, completed: boolean) => {
-    if (!data) return
-    setData({
-      ...data,
-      practiceTasks: data.practiceTasks.map((task) =>
-        task.id === taskId ? { ...task, completed } : task
-      )
-    })
+  const handleTaskToggle = (_taskId: string, _completed: boolean) => {
+    // This is local state management, not needed for TanStack Query
+    // Could be enhanced with a mutation if needed
   }
 
   const handleStartPractice = (_taskId: string) => {
@@ -124,10 +103,10 @@ export function Dashboard() {
   }
 
   if (error) {
-    return <ErrorState message={error} />
+    return <ErrorState message={error.message || t("dashboard.failedToLoad")} />
   }
 
-  if (!data) {
+  if (isLoading || !dashboardData) {
     return <MainLayout><></></MainLayout>
   }
 
@@ -139,12 +118,12 @@ export function Dashboard() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <WelcomeCard user={data.user} studyStats={data.studyStats} />
+        <WelcomeCard user={dashboardData.user} studyStats={dashboardData.studyStats} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg items-stretch">
           <div className="lg:col-span-2">
             <InflectionCard
-              tasks={data.practiceTasks}
+              tasks={dashboardData.practiceTasks}
               onToggleTask={handleTaskToggle}
               onStartPractice={handleStartPractice}
               className="h-full"
@@ -153,7 +132,7 @@ export function Dashboard() {
 
           <div>
             <SkillsBreakdownCard
-              skillsBreakdown={data.skillsBreakdown}
+              skillsBreakdown={dashboardData.skillsBreakdown}
               className="h-full"
             />
           </div>
@@ -162,8 +141,8 @@ export function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg items-stretch">
           <div className="lg:col-span-2">
             <TakeawayCard
-              initialStats={data.takeawayStats}
-              browsingHistory={data.browsingHistory}
+              initialStats={dashboardData.takeawayStats}
+              browsingHistory={dashboardData.browsingHistory}
               onTimeRangeChange={handleTimeRangeChange}
               className="h-full"
             />
@@ -171,7 +150,7 @@ export function Dashboard() {
 
           <div>
             <BlogCard
-              articles={data.blogArticles}
+              articles={dashboardData.blogArticles}
               onViewAll={handleViewAllBlog}
               onArticleClick={handleArticleClick}
               className="h-full"
@@ -184,4 +163,3 @@ export function Dashboard() {
 }
 
 export default Dashboard
-

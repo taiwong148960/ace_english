@@ -222,3 +222,5 @@ GRANT EXECUTE ON FUNCTION "public"."get_due_cards_with_fuzz"(UUID, UUID, INTEGER
 GRANT EXECUTE ON FUNCTION "public"."get_due_cards_with_fuzz"(UUID, UUID, INTEGER) TO "authenticated";
 GRANT EXECUTE ON FUNCTION "public"."get_due_cards_with_fuzz"(UUID, UUID, INTEGER) TO "service_role";
 
+
+

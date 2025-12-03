@@ -14,6 +14,10 @@ export {
 // Re-export i18n hook from react-i18next
 export { useTranslation } from "react-i18next"
 
-// Vocabulary hooks
-export { useBookDetail, formatWordForDisplay, type UseBookDetailReturn, type BookDetailData } from "./useBookDetail"
-
+// TanStack Query hooks
+export { useVocabularyBooks, useInvalidateVocabularyBooks } from "./useVocabularyBooks"
+export { useBookSettings } from "./useBookSettings"
+export { useBookDetail, useInvalidateBookDetail, formatWordForDisplay } from "./useBookDetail"
+export type { UseBookDetailReturn, BookDetailData } from "./useBookDetail"
+export { useDashboardData, useTakeawayStats } from "./useDashboardData"
+export { useCreateBook } from "./useCreateBook"

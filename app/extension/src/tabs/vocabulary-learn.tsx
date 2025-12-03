@@ -2,15 +2,23 @@ import React, { useEffect } from "react"
 import {
   PlatformProvider,
   setLanguageStorageAdapter,
-  initI18nWithStorage
+  initI18nWithStorage,
+  QueryClientProvider
 } from "@ace-ielts/core"
 import { VocabularyLearning } from "@ace-ielts/ui"
-import { extensionPlatformContext, extensionLanguageStorageAdapter } from "../adapters"
+import { 
+  extensionPlatformContext, 
+  extensionLanguageStorageAdapter,
+  createExtensionQueryClient 
+} from "../adapters"
 
 import "../styles/globals.css"
 
 // Configure i18n with extension storage
 setLanguageStorageAdapter(extensionLanguageStorageAdapter)
+
+// Create QueryClient instance for this tab
+const queryClient = createExtensionQueryClient()
 
 /**
  * Plasmo Tab Entry Point for Vocabulary Learning
@@ -23,11 +31,12 @@ function VocabularyLearnTab() {
   }, [])
 
   return (
-    <PlatformProvider context={extensionPlatformContext}>
-      <VocabularyLearning />
-    </PlatformProvider>
+    <QueryClientProvider client={queryClient}>
+      <PlatformProvider context={extensionPlatformContext}>
+        <VocabularyLearning />
+      </PlatformProvider>
+    </QueryClientProvider>
   )
 }
 
 export default VocabularyLearnTab
-

@@ -3,7 +3,7 @@
  * Displays all vocabulary books (user's and system) with search and navigation
  */
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import {
   BookOpen,
@@ -20,8 +20,7 @@ import {
   useNavigation,
   useTranslation,
   useAuth,
-  getUserBooksWithProgress,
-  getSystemBooksWithProgress,
+  useVocabularyBooks,
   type VocabularyBookWithProgress
 } from "@ace-ielts/core"
 
@@ -245,49 +244,23 @@ export function VocabularyBooks() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [userBooks, setUserBooks] = useState<VocabularyBookWithProgress[]>([])
-  const [systemBooks, setSystemBooks] = useState<VocabularyBookWithProgress[]>(
-    []
-  )
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null)
 
-  // Fetch books
-  const fetchBooks = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const userId = user?.id || ""
-
-      // Fetch system books (always available)
-      const systemData = await getSystemBooksWithProgress(userId)
-      setSystemBooks(systemData)
-
-      // Fetch user books (only if authenticated)
-      if (isAuthenticated && userId) {
-        const userData = await getUserBooksWithProgress(userId)
-        setUserBooks(userData)
-      } else {
-        setUserBooks([])
-      }
-    } catch (err) {
-      console.error("Error fetching books:", err)
-      setError(t("vocabulary.errors.fetchFailed"))
-    } finally {
-      setIsLoading(false)
-    }
-  }, [user?.id, isAuthenticated, t])
-
-  // Load books on mount
-  useEffect(() => {
-    if (!authLoading) {
-      fetchBooks()
-    }
-  }, [fetchBooks, authLoading])
+  // Use TanStack Query hook for fetching books
+  const {
+    userBooks,
+    systemBooks,
+    isLoading,
+    isRefetching,
+    error,
+    refetch
+  } = useVocabularyBooks({
+    userId: user?.id,
+    isAuthenticated,
+    enabled: !authLoading
+  })
 
   // Filter books by search query
   const filterBooks = useCallback(
@@ -315,8 +288,7 @@ export function VocabularyBooks() {
   }
 
   const handleCreateSuccess = () => {
-    // Refresh user books after creation
-    fetchBooks()
+    // TanStack Query will automatically invalidate and refetch
   }
 
   const handleOpenSettings = (bookId: string, e: React.MouseEvent) => {
@@ -368,12 +340,12 @@ export function VocabularyBooks() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={fetchBooks}
-              disabled={isLoading}
+              onClick={() => refetch()}
+              disabled={isLoading || isRefetching}
               title={t("vocabulary.refresh")}
             >
               <RefreshCw
-                className={cn("h-4 w-4", isLoading && "animate-spin")}
+                className={cn("h-4 w-4", (isLoading || isRefetching) && "animate-spin")}
               />
             </Button>
 
@@ -409,8 +381,8 @@ export function VocabularyBooks() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span>{error}</span>
-            <Button variant="ghost" size="sm" onClick={fetchBooks}>
+            <span>{error.message || t("vocabulary.errors.fetchFailed")}</span>
+            <Button variant="ghost" size="sm" onClick={() => refetch()}>
               {t("vocabulary.retry")}
             </Button>
           </motion.div>

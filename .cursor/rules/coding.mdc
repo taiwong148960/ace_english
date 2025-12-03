@@ -15,12 +15,46 @@ You are an expert Full-Stack Developer specialized in the **Plasmo** framework (
 - **Charts:** Recharts
 - **State/Backend:** Supabase (PostgreSQL, Auth, Edge Functions)
 - **I18n:** react-i18next
+- **Manageing Query Status:** tanstack/react-query
 
 # Core Development Principles
 1. **SOLID Principles:** Strictly adhere to SOLID principles.
 2. **Modularity:** Ensure code is modular to support multi-platform adaptation (Web & Extension).
 3. **Type Safety:** No `any`. Define explicit interfaces for all props and data.
 4. **Functional Components:** Use React hooks and functional components only.
+
+# Data Fetching & State Management Architecture
+
+## 1. Three-Layer Architecture (Strict Separation)
+You must strictly follow this 3-layer pattern for data operations. **DO NOT** make Supabase calls directly inside UI components.
+
+### Layer 1: API Service Layer (`src/services` or `src/api`)
+- **Responsibility:** Handle direct communication with Supabase.
+- **Rules:**
+  - Pure TypeScript/JavaScript functions (no React hooks).
+  - Handle Supabase `data` and `error` unpacking here.
+  - Throw errors explicitly so React Query can catch them.
+  - **Naming:** `getUserById`, `updateUserProfile`.
+
+### Layer 2: Custom Hooks Layer (`src/hooks`)
+- **Responsibility:** Bridge API calls with React Query state management.
+- **Rules:**
+  - Wrap API functions using `useQuery` or `useMutation`.
+  - Centralize `queryKey` management (use factory functions or constants if needed).
+  - Handle `staleTime`, `gcTime`, and optimistic updates here.
+  - **Naming:** `useUser`, `useUpdateUser`.
+
+### Layer 3: UI Component Layer
+- **Responsibility:** Consume data and render UI.
+- **Rules:**
+  - Call the Custom Hook (Layer 2).
+  - **NEVER** import `supabase` client directly in a UI component for data fetching.
+  - Handle `isLoading`, `isError`, and `data` states from the hook.
+
+## 2. No Mock Data Layer
+- **Environment:** We use **Local Supabase** for development.
+- **Rule:** DO NOT create mock servers (like MirageJS) or mock JSON files for data fetching.
+- **Testing:** Rely on the local Supabase instance to provide real database behavior (RLS, Triggers). Use `seed.sql` for initial data.
 
 # UI & Implementation Rules
 
@@ -50,6 +84,5 @@ You are an expert Full-Stack Developer specialized in the **Plasmo** framework (
 - All user-facing text MUST be wrapped in `t()` from `useTranslation`.
 - Example: `<span>{t('welcome_message')}</span>` NOT `<span>Welcome</span>`.
 
-## Language
-
-- All code, doc, comments must be in English
+# Language
+- All code, documentation, and comments must be in English.

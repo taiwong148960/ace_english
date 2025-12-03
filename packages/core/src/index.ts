@@ -16,6 +16,9 @@ export * from "./utils"
 // Hooks
 export * from "./hooks"
 
+// TanStack Query
+export { QueryClient, QueryClientProvider, createQueryClient, queryKeys } from "./query"
+
 // i18n
 export { 
   i18n, 

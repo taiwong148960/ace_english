@@ -1,9 +1,9 @@
 /**
  * useBookDetail Hook
- * Manages state and data fetching for the vocabulary book detail page
+ * TanStack Query based hook for vocabulary book detail page data
  */
 
-import { useState, useEffect, useCallback } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   getBookWithDetails,
   getTodayLearningSession,
@@ -12,6 +12,7 @@ import {
   initializeBookProgress
 } from "../services/vocabulary-detail"
 import { stateToMasteryLevel } from "../services/fsrs"
+import { queryKeys } from "../query"
 import type {
   VocabularyBook,
   UserBookProgress,
@@ -42,96 +43,124 @@ export interface UseBookDetailReturn extends BookDetailData {
   initializeProgress: () => Promise<void>
 }
 
-
 /**
  * Hook for managing vocabulary book detail page data
  */
 export function useBookDetail(bookId: string | null, userId: string | null): UseBookDetailReturn {
-  const [book, setBook] = useState<VocabularyBook | null>(null)
-  const [progress, setProgress] = useState<UserBookProgress | null>(null)
-  const [stats, setStats] = useState<BookDetailStats | null>(null)
-  const [recentWords, setRecentWords] = useState<WordWithProgress[]>([])
-  const [difficultWords, setDifficultWords] = useState<WordWithProgress[]>([])
-  const [todaySession, setTodaySession] = useState<TodayLearningSession | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+  const enabled = !!bookId && !!userId
+
+  // Main query for book details (book, progress, stats)
+  const bookDetailQuery = useQuery({
+    queryKey: queryKeys.bookDetail.byId(bookId || "", userId || ""),
+    queryFn: async () => {
+      const data = await getBookWithDetails(bookId!, userId!)
+      if (!data) {
+        throw new Error("Book not found")
+      }
+      return data
+    },
+    enabled,
+    staleTime: 2 * 60 * 1000 // 2 minutes
+  })
+
+  // Query for recent words
+  const recentWordsQuery = useQuery({
+    queryKey: queryKeys.bookDetail.recentWords(bookId || "", userId || ""),
+    queryFn: () => getRecentWords(bookId!, userId!, 5),
+    enabled,
+    staleTime: 1 * 60 * 1000 // 1 minute
+  })
+
+  // Query for difficult words
+  const difficultWordsQuery = useQuery({
+    queryKey: queryKeys.bookDetail.difficultWords(bookId || "", userId || ""),
+    queryFn: () => getDifficultWords(bookId!, userId!, 5),
+    enabled,
+    staleTime: 1 * 60 * 1000 // 1 minute
+  })
+
+  // Query for today's learning session
+  const todaySessionQuery = useQuery({
+    queryKey: queryKeys.bookDetail.todaySession(bookId || "", userId || ""),
+    queryFn: () => getTodayLearningSession(bookId!, userId!),
+    enabled,
+    staleTime: 30 * 1000 // 30 seconds - more frequently updated
+  })
 
   /**
-   * Fetch all book detail data
+   * Refetch all book detail data
    */
-  const fetchData = useCallback(async () => {
-    if (!bookId || !userId) {
-      setIsLoading(false)
-      return
-    }
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      // Fetch book with details
-      const bookData = await getBookWithDetails(bookId, userId)
-      
-      if (!bookData) {
-        setError("Book not found")
-        setIsLoading(false)
-        return
-      }
-
-      setBook(bookData.book)
-      setProgress(bookData.progress)
-      setStats(bookData.stats)
-
-      // Fetch related data in parallel
-      const [recent, difficult, session] = await Promise.all([
-        getRecentWords(bookId, userId, 5),
-        getDifficultWords(bookId, userId, 5),
-        getTodayLearningSession(bookId, userId)
-      ])
-
-      setRecentWords(recent)
-      setDifficultWords(difficult)
-      setTodaySession(session)
-    } catch (err) {
-      console.error("Error fetching book detail:", err)
-      setError(err instanceof Error ? err.message : "Failed to load book details")
-    } finally {
-      setIsLoading(false)
-    }
-  }, [bookId, userId])
+  const refetch = async () => {
+    await Promise.all([
+      bookDetailQuery.refetch(),
+      recentWordsQuery.refetch(),
+      difficultWordsQuery.refetch(),
+      todaySessionQuery.refetch()
+    ])
+  }
 
   /**
    * Initialize book progress if not exists
    */
-  const initializeProgress = useCallback(async () => {
+  const initializeProgressFn = async () => {
     if (!bookId || !userId) return
 
     try {
       const newProgress = await initializeBookProgress(userId, bookId)
       if (newProgress) {
-        setProgress(newProgress)
+        // Update the cache with the new progress
+        queryClient.setQueryData(
+          queryKeys.bookDetail.byId(bookId, userId),
+          (old: { book: VocabularyBook; progress: UserBookProgress | null; stats: BookDetailStats } | undefined) => {
+            if (!old) return old
+            return { ...old, progress: newProgress }
+          }
+        )
       }
     } catch (err) {
       console.error("Error initializing progress:", err)
     }
-  }, [bookId, userId])
+  }
 
-  // Fetch data on mount and when bookId/userId changes
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  // Determine overall error message
+  const error = bookDetailQuery.error
+    ? bookDetailQuery.error instanceof Error
+      ? bookDetailQuery.error.message
+      : "Failed to load book details"
+    : null
 
   return {
-    book,
-    progress,
-    stats,
-    recentWords,
-    difficultWords,
-    todaySession,
-    isLoading,
+    book: bookDetailQuery.data?.book ?? null,
+    progress: bookDetailQuery.data?.progress ?? null,
+    stats: bookDetailQuery.data?.stats ?? null,
+    recentWords: recentWordsQuery.data ?? [],
+    difficultWords: difficultWordsQuery.data ?? [],
+    todaySession: todaySessionQuery.data ?? null,
+    isLoading: bookDetailQuery.isLoading || recentWordsQuery.isLoading || difficultWordsQuery.isLoading || todaySessionQuery.isLoading,
     error,
-    refetch: fetchData,
-    initializeProgress
+    refetch,
+    initializeProgress: initializeProgressFn
+  }
+}
+
+/**
+ * Invalidate book detail cache
+ * Call this after reviewing words or making changes
+ */
+export function useInvalidateBookDetail() {
+  const queryClient = useQueryClient()
+
+  return {
+    invalidateAll: () => queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.all }),
+    invalidateBook: (bookId: string, userId: string) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.byId(bookId, userId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.recentWords(bookId, userId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.difficultWords(bookId, userId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.todaySession(bookId, userId) })
+    },
+    invalidateTodaySession: (bookId: string, userId: string) =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookDetail.todaySession(bookId, userId) })
   }
 }
 
@@ -186,4 +215,3 @@ function formatRelativeTime(timestamp: string, isFuture: boolean = false): strin
 }
 
 export default useBookDetail
-

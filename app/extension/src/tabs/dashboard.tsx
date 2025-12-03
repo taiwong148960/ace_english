@@ -2,15 +2,23 @@ import React, { useEffect } from "react"
 import {
   PlatformProvider,
   setLanguageStorageAdapter,
-  initI18nWithStorage
+  initI18nWithStorage,
+  QueryClientProvider
 } from "@ace-ielts/core"
 import { Dashboard } from "@ace-ielts/ui"
-import { extensionPlatformContext, extensionLanguageStorageAdapter } from "../adapters"
+import { 
+  extensionPlatformContext, 
+  extensionLanguageStorageAdapter,
+  createExtensionQueryClient 
+} from "../adapters"
 
 import "../styles/globals.css"
 
 // Configure i18n with extension storage
 setLanguageStorageAdapter(extensionLanguageStorageAdapter)
+
+// Create QueryClient instance for this tab
+const queryClient = createExtensionQueryClient()
 
 /**
  * Plasmo Tab Entry Point
@@ -23,9 +31,11 @@ function DashboardTab() {
   }, [])
 
   return (
-    <PlatformProvider context={extensionPlatformContext}>
-      <Dashboard />
-    </PlatformProvider>
+    <QueryClientProvider client={queryClient}>
+      <PlatformProvider context={extensionPlatformContext}>
+        <Dashboard />
+      </PlatformProvider>
+    </QueryClientProvider>
   )
 }
 

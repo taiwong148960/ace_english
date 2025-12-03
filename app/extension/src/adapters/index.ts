@@ -32,3 +32,4 @@ export const extensionLanguageStorageAdapter: LanguageStorageAdapter = {
 }
 
 export { chromeStorageAdapter, chromeNavigationAdapter, chromeEnvironmentAdapter }
+export { extensionQueryClient, createExtensionQueryClient } from "./query"

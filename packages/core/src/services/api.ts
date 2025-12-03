@@ -1,29 +1,23 @@
 /**
  * API Service Layer
- * Abstraction layer that can switch between mock and real backend
+ * Handles dashboard data fetching from Supabase
  * Following the Interface Segregation Principle (ISP)
  */
 
 import type { DashboardData, TakeawayStats } from "../types"
-import { withDelay } from "../utils"
-import { getMockDashboardData, getMockTakeawayStats } from "./mock-data"
+import { isSupabaseInitialized } from "./supabase"
 
 /**
  * Configuration for API behavior
  */
 interface ApiConfig {
-  useMock: boolean
   baseUrl?: string
-  mockDelay?: number
 }
 
 /**
- * Default configuration - use mock data in development
+ * Default configuration
  */
-const defaultConfig: ApiConfig = {
-  useMock: true,
-  mockDelay: 300
-}
+const defaultConfig: ApiConfig = {}
 
 let config = { ...defaultConfig }
 
@@ -47,39 +41,34 @@ export interface IDashboardApi {
  */
 export const dashboardApi: IDashboardApi = {
   /**
-   * Fetch complete dashboard data
+   * Fetch complete dashboard data from Supabase
+   * TODO: Implement real Supabase queries for dashboard data
    */
   async getDashboardData(): Promise<DashboardData> {
-    if (config.useMock) {
-      return withDelay(getMockDashboardData(), config.mockDelay)
+    if (!isSupabaseInitialized()) {
+      throw new Error("Supabase not initialized")
     }
 
-    // Real API call would go here
-    const response = await fetch(`${config.baseUrl}/api/dashboard`)
-    if (!response.ok) {
-      throw new Error("Failed to fetch dashboard data")
-    }
-    return response.json()
+    // TODO: Implement real Supabase queries
+    // This should fetch from Supabase tables:
+    // - user_profiles, study_stats, skills_breakdown, practice_tasks, etc.
+    throw new Error("Dashboard data fetching not yet implemented. Please implement Supabase queries in services/api.ts")
   },
 
   /**
-   * Fetch takeaway statistics by time range
+   * Fetch takeaway statistics by time range from Supabase
+   * TODO: Implement real Supabase queries for takeaway stats
    */
   async getTakeawayStats(
-    timeRange: TakeawayStats["timeRange"]
+    _timeRange: TakeawayStats["timeRange"]
   ): Promise<TakeawayStats> {
-    if (config.useMock) {
-      return withDelay(getMockTakeawayStats(timeRange), config.mockDelay)
+    if (!isSupabaseInitialized()) {
+      throw new Error("Supabase not initialized")
     }
 
-    // Real API call would go here
-    const response = await fetch(
-      `${config.baseUrl}/api/takeaway?range=${timeRange}`
-    )
-    if (!response.ok) {
-      throw new Error("Failed to fetch takeaway stats")
-    }
-    return response.json()
+    // TODO: Implement real Supabase queries
+    // This should fetch from Supabase tables based on timeRange
+    throw new Error("Takeaway stats fetching not yet implemented. Please implement Supabase queries in services/api.ts")
   }
 }
 

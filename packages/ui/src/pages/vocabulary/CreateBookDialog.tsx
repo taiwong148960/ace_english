@@ -17,9 +17,8 @@ import {
 import {
   cn,
   useTranslation,
-  createBook,
-  BOOK_COVER_COLORS,
-  type CreateVocabularyBookInput
+  useCreateBook,
+  BOOK_COVER_COLORS
 } from "@ace-ielts/core"
 
 import {
@@ -131,8 +130,23 @@ export function CreateBookDialog({
   const [coverText, setCoverText] = useState("")
   const [coverTextEdited, setCoverTextEdited] = useState(false)
   const [wordsText, setWordsText] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Use TanStack Query mutation hook
+  const { createBook, isCreating } = useCreateBook({
+    userId,
+    onSuccess: () => {
+      // Reset form
+      resetForm()
+      // Close dialog and notify parent
+      onOpenChange(false)
+      onSuccess?.()
+    },
+    onError: (err) => {
+      console.error("Error creating book:", err)
+      setError(t("vocabulary.createBook.errors.createFailed"))
+    }
+  })
 
   // Parse words from text (one word per line)
   const parseWords = useCallback((text: string): string[] => {
@@ -147,6 +161,19 @@ export function CreateBookDialog({
   }, [])
 
   const parsedWords = parseWords(wordsText)
+
+  // Reset form state
+  const resetForm = () => {
+    setName("")
+    setDescription("")
+    setCoverColor(
+      BOOK_COVER_COLORS[Math.floor(Math.random() * BOOK_COVER_COLORS.length)]
+    )
+    setCoverText("")
+    setWordsText("")
+    setCoverTextEdited(false)
+    setError(null)
+  }
 
   // Handle file upload
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,51 +229,20 @@ export function CreateBookDialog({
       return
     }
 
-    setIsSubmitting(true)
-
-    try {
-      const input: CreateVocabularyBookInput = {
-        name: name.trim(),
-        description: description.trim() || undefined,
-        cover_color: coverColor,
-        cover_text: coverText.trim() || undefined,
-        book_type: "custom",
-        words: parsedWords
-      }
-
-      await createBook(userId, input)
-
-      // Reset form
-      setName("")
-      setDescription("")
-      setCoverColor(
-        BOOK_COVER_COLORS[Math.floor(Math.random() * BOOK_COVER_COLORS.length)]
-      )
-      setWordsText("")
-
-      // Close dialog and notify parent
-      onOpenChange(false)
-      onSuccess?.()
-    } catch (err) {
-      console.error("Error creating book:", err)
-      setError(t("vocabulary.createBook.errors.createFailed"))
-    } finally {
-      setIsSubmitting(false)
-    }
+    await createBook({
+      name: name.trim(),
+      description: description.trim() || undefined,
+      cover_color: coverColor,
+      cover_text: coverText.trim() || undefined,
+      book_type: "custom",
+      words: parsedWords
+    })
   }
 
   // Reset form when dialog closes
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
-      setName("")
-      setDescription("")
-      setCoverColor(
-        BOOK_COVER_COLORS[Math.floor(Math.random() * BOOK_COVER_COLORS.length)]
-      )
-      setCoverText("")
-      setWordsText("")
-      setCoverTextEdited(false)
-      setError(null)
+      resetForm()
     } else {
       setCoverColor(
         BOOK_COVER_COLORS[Math.floor(Math.random() * BOOK_COVER_COLORS.length)]
@@ -288,7 +284,7 @@ export function CreateBookDialog({
               }}
               placeholder={t("vocabulary.createBook.namePlaceholder")}
               maxLength={100}
-              disabled={isSubmitting}
+              disabled={isCreating}
             />
           </div>
 
@@ -303,7 +299,7 @@ export function CreateBookDialog({
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t("vocabulary.createBook.descriptionPlaceholder")}
               maxLength={200}
-              disabled={isSubmitting}
+              disabled={isCreating}
             />
           </div>
 
@@ -321,7 +317,7 @@ export function CreateBookDialog({
               }}
               placeholder={t("vocabulary.createBook.coverTextPlaceholder")}
               maxLength={100}
-              disabled={isSubmitting}
+              disabled={isCreating}
               className="font-medium italic"
             />
           </div>
@@ -353,7 +349,7 @@ export function CreateBookDialog({
                   size="sm"
                   className="gap-1.5 text-xs"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={isSubmitting}
+                  disabled={isCreating}
                 >
                   <Upload className="h-3.5 w-3.5" />
                   {t("vocabulary.createBook.uploadFile")}
@@ -366,7 +362,7 @@ export function CreateBookDialog({
               onChange={(e) => setWordsText(e.target.value)}
               placeholder={t("vocabulary.createBook.wordsPlaceholder")}
               className="min-h-[150px] font-mono text-sm"
-              disabled={isSubmitting}
+              disabled={isCreating}
             />
             <p className="text-xs text-text-tertiary flex items-center gap-1">
               <FileText className="h-3 w-3" />
@@ -402,21 +398,21 @@ export function CreateBookDialog({
               type="button"
               variant="outline"
               onClick={() => handleOpenChange(false)}
-              disabled={isSubmitting}
+              disabled={isCreating}
             >
               {t("vocabulary.createBook.cancel")}
             </Button>
             <Button
               type="submit"
               disabled={
-                isSubmitting ||
+                isCreating ||
                 !name.trim() ||
                 parsedWords.length === 0 ||
                 parsedWords.length > 10000
               }
               className="gap-2"
             >
-              {isSubmitting ? (
+              {isCreating ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   {t("vocabulary.createBook.creating")}
