@@ -4,7 +4,7 @@
  * Integrated with FSRS-based spaced repetition algorithm
  */
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import {
   ArrowLeft,
@@ -14,11 +14,11 @@ import {
   CheckCircle2,
   Clock,
   GraduationCap,
-  Loader2,
   PlayCircle,
   Sparkles,
   Target,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from "lucide-react"
 import {
   LineChart,
@@ -37,7 +37,6 @@ import {
   useBookDetail,
   formatWordForDisplay,
   useAuth,
-  type WordWithProgress,
   type BookDetailStats
 } from "@ace-ielts/core"
 
@@ -54,6 +53,7 @@ import {
   TooltipProvider,
   fadeInUp
 } from "../../components"
+import { BookSettingsDialog } from "./BookSettingsDialog"
 
 /**
  * Progress ring component
@@ -343,6 +343,7 @@ export function VocabularyBookDetail() {
   const { t } = useTranslation()
   const navigation = useNavigation()
   const { user, isLoading: isAuthLoading } = useAuth()
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
 
   // Extract bookId from URL - assuming route pattern /vocabulary/:bookId
   const bookId = useMemo(() => {
@@ -442,6 +443,14 @@ export function VocabularyBookDetail() {
     navigation.navigate(`/${itemId}`)
   }
 
+  const handleOpenSettings = () => {
+    setSettingsDialogOpen(true)
+  }
+
+  const handleSettingsSuccess = () => {
+    // Settings saved, could refresh if needed
+  }
+
   // Loading state
   if (isLoading || isAuthLoading) {
     return (
@@ -490,7 +499,20 @@ export function VocabularyBookDetail() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-text-primary">{book.name}</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-text-primary">{book.name}</h1>
+              {user && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleOpenSettings}
+                  className="h-8 w-8"
+                  title={t("vocabulary.settings.title")}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
             <p className="text-text-secondary text-sm">
               {book.description || t("vocabulary.noDescription")}
             </p>
@@ -772,6 +794,17 @@ export function VocabularyBookDetail() {
           </div>
         </div>
       </motion.div>
+
+      {/* Book Settings Dialog */}
+      {user && bookId && (
+        <BookSettingsDialog
+          open={settingsDialogOpen}
+          onOpenChange={setSettingsDialogOpen}
+          userId={user.id}
+          bookId={bookId}
+          onSuccess={handleSettingsSuccess}
+        />
+      )}
     </MainLayout>
   )
 }

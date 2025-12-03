@@ -34,7 +34,11 @@ export type {
   BookDetailStats,
   WordWithProgress,
   TodayLearningSession,
-  SchedulingResult
+  SchedulingResult,
+  BookSettings,
+  UpdateBookSettingsInput,
+  StudyOrder,
+  LearningMode
 } from "./vocabulary"
 export {
   BOOK_COVER_COLORS,
@@ -42,7 +46,8 @@ export {
   GRADE_TO_RATING,
   DEFAULT_FSRS_PARAMS,
   LEARNING_STEPS,
-  LEARNING_GRADUATION_STEPS
+  LEARNING_GRADUATION_STEPS,
+  DEFAULT_BOOK_SETTINGS
 } from "./vocabulary"
 
 /**

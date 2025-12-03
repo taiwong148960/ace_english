@@ -181,6 +181,33 @@
       "noRecentWords": "暂无学习记录",
       "noDifficultWords": "暂无困难词汇"
     },
+    "settings": {
+      "title": "词本设置",
+      "description": "自定义此词汇书的学习体验",
+      "dailyLimits": "每日上限",
+      "dailyNewLimit": "每日新词数",
+      "dailyNewLimitHint": "每天最多学习的新词数量（默认：20）",
+      "dailyReviewLimit": "每日复习数",
+      "dailyReviewLimitHint": "每天最多复习的词汇数量（默认：60，新词的3倍）",
+      "learningMode": "学习模式",
+      "readOnly": "仅阅读",
+      "readOnlyHint": "只需阅读和理解单词，无需拼写",
+      "spelling": "拼写",
+      "spellingHint": "标记为'认识'时需要正确拼写单词",
+      "studyOrder": "学习顺序",
+      "sequential": "顺序",
+      "random": "随机",
+      "studyOrderHint": "选择按顺序学习还是随机学习",
+      "cancel": "取消",
+      "save": "保存设置",
+      "saving": "保存中...",
+      "errors": {
+        "loadFailed": "加载设置失败，请重试。",
+        "saveFailed": "保存设置失败，请重试。",
+        "invalidNewLimit": "新词上限必须在 5 到 200 之间",
+        "invalidReviewLimit": "复习上限必须在 1 到 1000 之间"
+      }
+    },
     "learning": {
       "wordCard": "单词卡片",
       "pronunciation": "发音",

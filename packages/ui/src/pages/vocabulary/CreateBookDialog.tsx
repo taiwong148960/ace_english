@@ -19,7 +19,6 @@ import {
   useTranslation,
   createBook,
   BOOK_COVER_COLORS,
-  DEFAULT_BOOK_COVER_COLOR,
   type CreateVocabularyBookInput
 } from "@ace-ielts/core"
 

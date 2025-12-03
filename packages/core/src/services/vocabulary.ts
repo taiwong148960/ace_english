@@ -10,9 +10,11 @@ import type {
   UserBookProgress,
   VocabularyBookWithProgress,
   CreateVocabularyBookInput,
-  UpdateVocabularyBookInput
+  UpdateVocabularyBookInput,
+  BookSettings,
+  UpdateBookSettingsInput
 } from "../types/vocabulary"
-import { DEFAULT_BOOK_COVER_COLOR, BOOK_COVER_COLORS } from "../types/vocabulary"
+import { DEFAULT_BOOK_SETTINGS as DEFAULT_SETTINGS, BOOK_COVER_COLORS } from "../types/vocabulary"
 
 /**
  * Vocabulary API interface
@@ -498,6 +500,122 @@ export async function getBookProgress(
 /**
  * Vocabulary API object implementing the interface
  */
+/**
+ * Get book settings for a user and book
+ * Returns default settings if not found
+ */
+export async function getBookSettings(
+  userId: string,
+  bookId: string
+): Promise<BookSettings> {
+  if (!isSupabaseInitialized()) {
+    throw new Error("Supabase not initialized")
+  }
+
+  const supabase = getSupabase()
+  const { data, error } = await supabase
+    .from("book_settings")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("book_id", bookId)
+    .single()
+
+  if (error) {
+    // If not found, return default settings (will be created on first update)
+    if (error.code === "PGRST116") {
+      return {
+        id: "",
+        user_id: userId,
+        book_id: bookId,
+        ...DEFAULT_SETTINGS,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    }
+    console.error("Error fetching book settings:", error)
+    throw new Error("Failed to fetch book settings")
+  }
+
+  return data
+}
+
+/**
+ * Update or create book settings
+ */
+export async function updateBookSettings(
+  userId: string,
+  bookId: string,
+  input: UpdateBookSettingsInput
+): Promise<BookSettings> {
+  if (!isSupabaseInitialized()) {
+    throw new Error("Supabase not initialized")
+  }
+
+  const supabase = getSupabase()
+
+  // Check if settings exist
+  const { data: existing } = await supabase
+    .from("book_settings")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("book_id", bookId)
+    .single()
+
+  const updateData: Record<string, unknown> = {}
+  if (input.daily_new_limit !== undefined) {
+    updateData.daily_new_limit = input.daily_new_limit
+    // Auto-update review limit if not explicitly set (3x of new limit)
+    if (input.daily_review_limit === undefined) {
+      updateData.daily_review_limit = input.daily_new_limit * 3
+    }
+  }
+  if (input.daily_review_limit !== undefined) {
+    updateData.daily_review_limit = input.daily_review_limit
+  }
+  if (input.learning_mode !== undefined) {
+    updateData.learning_mode = input.learning_mode
+  }
+  if (input.study_order !== undefined) {
+    updateData.study_order = input.study_order
+  }
+
+  if (existing) {
+    // Update existing settings
+    const { data, error } = await supabase
+      .from("book_settings")
+      .update(updateData)
+      .eq("id", existing.id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error updating book settings:", error)
+      throw new Error("Failed to update book settings")
+    }
+
+    return data
+  } else {
+    // Create new settings
+    const { data, error } = await supabase
+      .from("book_settings")
+      .insert({
+        user_id: userId,
+        book_id: bookId,
+        ...DEFAULT_SETTINGS,
+        ...updateData
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error creating book settings:", error)
+      throw new Error("Failed to create book settings")
+    }
+
+    return data
+  }
+}
+
 export const vocabularyApi: IVocabularyApi = {
   getSystemBooks,
   getUserBooks,

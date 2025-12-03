@@ -48,7 +48,9 @@ export {
   getBookWords,
   addWords,
   deleteWord,
-  getBookProgress
+  getBookProgress,
+  getBookSettings,
+  updateBookSettings
 } from "./vocabulary"
 export type { IVocabularyApi } from "./vocabulary"
 

@@ -1,4 +1,3 @@
-import React from "react"
 import { motion } from "framer-motion"
 import { ArrowUpRight, Clock, Newspaper } from "lucide-react"
 import { cn, useTranslation, type BlogArticle } from "@ace-ielts/core"

@@ -7,7 +7,6 @@ import { getSupabase, isSupabaseInitialized } from "./supabase"
 import { fsrsScheduler, createInitialWordProgress, stateToMasteryLevel } from "./fsrs"
 import type {
   VocabularyBook,
-  VocabularyWord,
   UserWordProgress,
   UserBookProgress,
   BookDetailStats,
@@ -77,7 +76,6 @@ async function calculateBookStats(
 
   const supabase = getSupabase()
   const now = new Date()
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
   // Get word progress counts
   const { data: progressData } = await supabase

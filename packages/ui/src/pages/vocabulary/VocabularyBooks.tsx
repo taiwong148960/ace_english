@@ -11,9 +11,9 @@ import {
   Search,
   ChevronRight,
   Clock,
-  Star,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Settings
 } from "lucide-react"
 import {
   cn,
@@ -36,22 +36,7 @@ import {
   staggerItem
 } from "../../components"
 import { CreateBookDialog } from "./CreateBookDialog"
-
-/**
- * Book cover icon component
- */
-function BookIcon({ type, className }: { type: string; className?: string }) {
-  switch (type) {
-    case "ielts":
-      return <Sparkles className={className} />
-    case "academic":
-      return <BookOpen className={className} />
-    case "business":
-      return <Star className={className} />
-    default:
-      return <BookOpen className={className} />
-  }
-}
+import { BookSettingsDialog } from "./BookSettingsDialog"
 
 /**
  * Format last studied time
@@ -79,11 +64,15 @@ function formatLastStudied(date: string | null | undefined): string | null {
 function VocabularyBookCard({
   book,
   onClick,
-  index
+  index,
+  isAuthenticated,
+  onOpenSettings
 }: {
   book: VocabularyBookWithProgress
   onClick: () => void
   index: number
+  isAuthenticated: boolean
+  onOpenSettings?: (bookId: string, e: React.MouseEvent) => void
 }) {
   const { t } = useTranslation()
 
@@ -116,7 +105,16 @@ function VocabularyBookCard({
             <div className="absolute top-2 right-2 w-16 h-16 border border-white/30 rounded-full" />
             <div className="absolute bottom-2 left-2 w-8 h-8 border border-white/30 rounded-full" />
           </div>
-          
+          {/* Settings Button */}
+          {isAuthenticated && onOpenSettings && (
+            <button
+              onClick={(e) => onOpenSettings(book.id, e)}
+              className="absolute top-2 right-2 p-1.5 rounded-md bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
+              title={t("vocabulary.settings.title")}
+            >
+              <Settings className="h-4 w-4 text-white" />
+            </button>
+          )}
         </div>
 
         <CardContent className="pt-4">
@@ -254,6 +252,8 @@ export function VocabularyBooks() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false)
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null)
 
   // Fetch books
   const fetchBooks = useCallback(async () => {
@@ -317,6 +317,16 @@ export function VocabularyBooks() {
   const handleCreateSuccess = () => {
     // Refresh user books after creation
     fetchBooks()
+  }
+
+  const handleOpenSettings = (bookId: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    setSelectedBookId(bookId)
+    setSettingsDialogOpen(true)
+  }
+
+  const handleSettingsSuccess = () => {
+    // Settings saved, could refresh if needed
   }
 
   const totalWordCount =
@@ -462,6 +472,8 @@ export function VocabularyBooks() {
                         book={book}
                         onClick={() => handleBookClick(book.id)}
                         index={index}
+                        isAuthenticated={isAuthenticated}
+                        onOpenSettings={handleOpenSettings}
                       />
                     ))}
                   </motion.div>
@@ -495,6 +507,8 @@ export function VocabularyBooks() {
                       book={book}
                       onClick={() => handleBookClick(book.id)}
                       index={index}
+                      isAuthenticated={isAuthenticated}
+                      onOpenSettings={handleOpenSettings}
                     />
                   ))}
                 </motion.div>
@@ -515,6 +529,17 @@ export function VocabularyBooks() {
           onOpenChange={setCreateDialogOpen}
           userId={user.id}
           onSuccess={handleCreateSuccess}
+        />
+      )}
+
+      {/* Book Settings Dialog */}
+      {isAuthenticated && user && selectedBookId && (
+        <BookSettingsDialog
+          open={settingsDialogOpen}
+          onOpenChange={setSettingsDialogOpen}
+          userId={user.id}
+          bookId={selectedBookId}
+          onSuccess={handleSettingsSuccess}
         />
       )}
     </MainLayout>

@@ -17,8 +17,7 @@ import type {
   UserBookProgress,
   BookDetailStats,
   WordWithProgress,
-  TodayLearningSession,
-  FSRSState
+  TodayLearningSession
 } from "../types/vocabulary"
 
 /**
@@ -43,21 +42,6 @@ export interface UseBookDetailReturn extends BookDetailData {
   initializeProgress: () => Promise<void>
 }
 
-/**
- * Default book stats
- */
-const defaultStats: BookDetailStats = {
-  totalWords: 0,
-  mastered: 0,
-  learning: 0,
-  newWords: 0,
-  todayReview: 0,
-  todayNew: 0,
-  estimatedMinutes: 0,
-  streak: 0,
-  accuracy: 0,
-  averageStability: 0
-}
 
 /**
  * Hook for managing vocabulary book detail page data

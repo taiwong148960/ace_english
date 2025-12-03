@@ -1,4 +1,3 @@
-import React from "react"
 import { motion } from "framer-motion"
 import { Github, Globe, HelpCircle, Youtube } from "lucide-react"
 import { cn, changeLanguage, SUPPORTED_LANGUAGES, useTranslation } from "@ace-ielts/core"

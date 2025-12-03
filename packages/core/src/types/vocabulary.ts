@@ -320,3 +320,48 @@ export interface SchedulingResult {
   learning_step: number
   is_learning_phase: boolean
 }
+
+/**
+ * Study order type
+ */
+export type StudyOrder = "sequential" | "random"
+
+/**
+ * Learning mode type
+ */
+export type LearningMode = "read_only" | "spelling"
+
+/**
+ * Book settings - user-specific settings for vocabulary books
+ */
+export interface BookSettings {
+  id: string
+  user_id: string
+  book_id: string
+  daily_new_limit: number
+  daily_review_limit: number
+  learning_mode: LearningMode
+  study_order: StudyOrder
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Default book settings
+ */
+export const DEFAULT_BOOK_SETTINGS: Omit<BookSettings, "id" | "user_id" | "book_id" | "created_at" | "updated_at"> = {
+  daily_new_limit: 20,
+  daily_review_limit: 60, // 3x of daily_new_limit
+  learning_mode: "read_only",
+  study_order: "sequential"
+}
+
+/**
+ * Update book settings input
+ */
+export interface UpdateBookSettingsInput {
+  daily_new_limit?: number
+  daily_review_limit?: number
+  learning_mode?: LearningMode
+  study_order?: StudyOrder
+}

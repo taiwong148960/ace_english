@@ -148,7 +148,7 @@ export class FSRSScheduler {
     rating: FSRSRating,
     now: Date = new Date()
   ): SchedulingResult {
-    const { state, difficulty, stability, learning_step, is_learning_phase, elapsed_days } = progress
+    const { state, is_learning_phase } = progress
 
     // Handle cards in learning phase (minute-based scheduling)
     if (is_learning_phase || state === "new" || state === "learning") {
@@ -167,7 +167,7 @@ export class FSRSScheduler {
     rating: FSRSRating,
     now: Date
   ): SchedulingResult {
-    const { learning_step, reps, lapses } = progress
+    const { learning_step } = progress
     const intervalMinutes = LEARNING_STEPS[rating]
 
     // First review - initialize FSRS parameters

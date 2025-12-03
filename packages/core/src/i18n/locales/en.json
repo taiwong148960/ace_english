@@ -181,6 +181,33 @@
       "noRecentWords": "No words learned yet",
       "noDifficultWords": "No difficult words yet"
     },
+    "settings": {
+      "title": "Book Settings",
+      "description": "Customize your learning experience for this vocabulary book",
+      "dailyLimits": "Daily Limits",
+      "dailyNewLimit": "New Words per Day",
+      "dailyNewLimitHint": "Maximum number of new words to learn each day (default: 20)",
+      "dailyReviewLimit": "Review Words per Day",
+      "dailyReviewLimitHint": "Maximum number of words to review each day (default: 60, 3x of new words)",
+      "learningMode": "Learning Mode",
+      "readOnly": "Read Only",
+      "readOnlyHint": "Read and understand words without spelling",
+      "spelling": "Spelling",
+      "spellingHint": "Require correct spelling when marking words as 'known'",
+      "studyOrder": "Study Order",
+      "sequential": "Sequential",
+      "random": "Random",
+      "studyOrderHint": "Choose whether to study words in order or randomly",
+      "cancel": "Cancel",
+      "save": "Save Settings",
+      "saving": "Saving...",
+      "errors": {
+        "loadFailed": "Failed to load settings. Please try again.",
+        "saveFailed": "Failed to save settings. Please try again.",
+        "invalidNewLimit": "New words limit must be between 5 and 200",
+        "invalidReviewLimit": "Review words limit must be between 1 and 1000"
+      }
+    },
     "learning": {
       "wordCard": "Word Card",
       "pronunciation": "Pronunciation",
