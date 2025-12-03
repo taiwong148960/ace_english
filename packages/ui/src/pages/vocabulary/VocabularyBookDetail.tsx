@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import {
   ArrowLeft,
   Brain,
+  BookOpen,
   Calendar,
   CheckCircle2,
   Clock,
@@ -15,6 +16,16 @@ import {
   Sparkles,
   Target
 } from "lucide-react"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Legend
+} from "recharts"
 import { cn, useNavigation, useTranslation } from "@ace-ielts/core"
 
 import { MainLayout } from "../../layout"
@@ -80,7 +91,9 @@ const mockBookDetail = {
   difficultWords: [
     { id: "6", word: "serendipity", mastery: "learning", lastReviewed: "2d ago", nextReview: "today" },
     { id: "7", word: "paradigm", mastery: "learning", lastReviewed: "1d ago", nextReview: "today" },
-    { id: "8", word: "dichotomy", mastery: "new", lastReviewed: null, nextReview: null }
+    { id: "8", word: "dichotomy", mastery: "new", lastReviewed: null, nextReview: null },
+    { id: "9", word: "ephemeral", mastery: "learning", lastReviewed: "3d ago", nextReview: "today" },
+    { id: "10", word: "ubiquitous", mastery: "learning", lastReviewed: "2d ago", nextReview: "tomorrow" }
   ] as WordProgress[]
 }
 
@@ -90,7 +103,7 @@ const mockBookDetail = {
  */
 function ProgressRing({
   progress,
-  size = 120,
+  size = 105,
   strokeWidth = 8,
   label,
   value
@@ -160,7 +173,7 @@ function WordListItem({ word, index }: { word: WordProgress; index: number }) {
 
   return (
     <motion.div
-      className="flex items-center justify-between py-3 border-b border-neutral-border last:border-0"
+      className="flex items-center justify-between py-2 border-b border-neutral-border last:border-0"
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
@@ -182,52 +195,124 @@ function ForgettingCurveChart({
   masteredS = 30,
   learningS = 7,
   newS = 2,
-  days = 30,
-  width = 300,
-  height = 160
+  days = 30
 }: {
   masteredS?: number
   learningS?: number
   newS?: number
   days?: number
-  width?: number
-  height?: number
 }) {
   const { t } = useTranslation()
-  const pad = 16
-  const w = width
-  const h = height
-  const toX = (d: number) => pad + (d / days) * (w - pad * 2)
-  const toY = (r: number) => pad + (1 - r) * (h - pad * 2)
+  
+  // Calculate retention data points
   const retention = (d: number, S: number) => Math.exp(-d / S)
-  const buildPath = (S: number) => {
-    const pts = Array.from({ length: days + 1 }, (_, i) => ({ x: toX(i), y: toY(retention(i, S)) }))
-    return `M ${pts[0].x},${pts[0].y} ` + pts.slice(1).map(p => `L ${p.x},${p.y}`).join(" ")
+  const data = Array.from({ length: days + 1 }, (_, i) => ({
+    day: i,
+    mastered: retention(i, masteredS),
+    learning: retention(i, learningS),
+    new: retention(i, newS)
+  }))
+
+  // Custom tooltip formatter
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || payload.length === 0) return null
+
+    const day = payload[0].payload.day
+    
+    return (
+      <div className="bg-white border border-neutral-border rounded-lg shadow-lg p-3 space-y-2">
+        <p className="text-sm font-medium text-text-primary border-b pb-2">
+          {t("vocabulary.bookDetail.tooltipDays", { days: day })}
+        </p>
+        {payload.map((entry: any) => {
+          const labelMap: Record<string, string> = {
+            mastered: t("vocabulary.bookDetail.tooltipMastered", { strength: masteredS }),
+            learning: t("vocabulary.bookDetail.tooltipLearning", { strength: learningS }),
+            new: t("vocabulary.bookDetail.tooltipNew", { strength: newS })
+          }
+          const colorMap: Record<string, string> = {
+            mastered: "#059669",
+            learning: "#d97706",
+            new: "#475569"
+          }
+          return (
+            <div key={entry.dataKey} className="flex items-center gap-2 text-xs">
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ backgroundColor: colorMap[entry.dataKey] || entry.color }}
+              />
+              <span className="text-text-secondary">{labelMap[entry.dataKey]}:</span>
+              <span className="font-medium text-text-primary">
+                {t("vocabulary.bookDetail.tooltipRetention", { percent: (entry.value * 100).toFixed(1) })}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    )
   }
-  const gridY = [0, 0.25, 0.5, 0.75, 1]
-  const gridX = [0, 5, 10, 20, 30]
+
   return (
-    <div className="w-full">
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="text-neutral-border">
-        <rect x={pad} y={pad} width={w - pad * 2} height={h - pad * 2} rx={8} className="fill-transparent" />
-        {gridY.map(g => (
-          <line key={`gy-${g}`} x1={pad} x2={w - pad} y1={toY(g)} y2={toY(g)} className="stroke-neutral-border" strokeDasharray="4 4" />
-        ))}
-        {gridX.map(g => (
-          <line key={`gx-${g}`} y1={pad} y2={h - pad} x1={toX(g)} x2={toX(g)} className="stroke-neutral-border" strokeDasharray="4 4" />
-        ))}
-        <path d={buildPath(masteredS)} className="stroke-emerald-600 fill-none" strokeWidth={2} />
-        <path d={buildPath(learningS)} className="stroke-amber-600 fill-none" strokeWidth={2} />
-        <path d={buildPath(newS)} className="stroke-slate-600 fill-none" strokeWidth={2} />
-      </svg>
-        <div className="mt-2 flex items-center justify-between text-xs text-text-secondary">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-emerald-600" />{t("vocabulary.bookDetail.mastered")}</div>
-            <div className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-amber-600" />{t("vocabulary.bookDetail.learning")}</div>
-            <div className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-slate-600" />{t("vocabulary.bookDetail.new")}</div>
-          </div>
-          <span>0–30d</span>
-        </div>
+    <div className="w-full h-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={data}
+          margin={{ top: 5, right: 15, left: 5, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="4 4" stroke="#e5e7eb" />
+          <XAxis
+            dataKey="day"
+            label={{ value: t("vocabulary.bookDetail.xAxisLabel"), position: "insideBottom", offset: -3, style: { textAnchor: "middle", fill: "#6b7280", fontSize: 11 } }}
+            stroke="#9ca3af"
+            tick={{ fill: "#6b7280", fontSize: 11 }}
+            domain={[0, days]}
+          />
+          <YAxis
+            label={{ value: t("vocabulary.bookDetail.yAxisLabel"), angle: -90, position: "insideLeft", style: { textAnchor: "middle", fill: "#6b7280", fontSize: 11 } }}
+            stroke="#9ca3af"
+            tick={{ fill: "#6b7280", fontSize: 11 }}
+            domain={[0, 1]}
+            tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+          />
+          <RechartsTooltip content={<CustomTooltip />} />
+          <Legend
+            wrapperStyle={{ paddingTop: "10px" }}
+            iconType="line"
+            formatter={(value) => {
+              const labelMap: Record<string, string> = {
+                mastered: t("vocabulary.bookDetail.mastered"),
+                learning: t("vocabulary.bookDetail.learning"),
+                new: t("vocabulary.bookDetail.new")
+              }
+              return labelMap[value] || value
+            }}
+          />
+          <Line
+            type="monotone"
+            dataKey="mastered"
+            stroke="#059669"
+            strokeWidth={2}
+            dot={false}
+            name="mastered"
+          />
+          <Line
+            type="monotone"
+            dataKey="learning"
+            stroke="#d97706"
+            strokeWidth={2}
+            dot={false}
+            name="learning"
+          />
+          <Line
+            type="monotone"
+            dataKey="new"
+            stroke="#475569"
+            strokeWidth={2}
+            dot={false}
+            name="new"
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   )
 }
@@ -243,6 +328,23 @@ export function VocabularyBookDetail() {
   const masteredPercent = Math.round((book.stats.mastered / book.stats.totalWords) * 100)
   const learningPercent = Math.round((book.stats.learning / book.stats.totalWords) * 100)
   const newPercent = Math.round((book.stats.newWords / book.stats.totalWords) * 100)
+
+  // Calculate estimated completion time
+  const remainingWords = book.stats.newWords + book.stats.learning
+  const dailyWords = book.stats.todayNew + book.stats.todayReview || 1 // Default to 1 if no daily words
+  const estimatedDays = Math.ceil(remainingWords / dailyWords)
+  
+  const getEstimatedCompletionText = () => {
+    if (estimatedDays < 7) {
+      return t("vocabulary.bookDetail.estimatedCompletionDays", { days: estimatedDays })
+    } else if (estimatedDays < 30) {
+      const weeks = Math.ceil(estimatedDays / 7)
+      return t("vocabulary.bookDetail.estimatedCompletionWeeks", { weeks })
+    } else {
+      const months = Math.ceil(estimatedDays / 30)
+      return t("vocabulary.bookDetail.estimatedCompletionMonths", { months })
+    }
+  }
 
   const handleBack = () => {
     navigation.navigate("/vocabulary")
@@ -282,18 +384,17 @@ export function VocabularyBookDetail() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
-          {/* Left Column - Overview & Today's Goal */}
-          <div className="lg:col-span-2 space-y-lg">
-            {/* Overview Card */}
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" />
+          {/* Row 1: Overview & Today's Goal - same height */}
+          {/* Overview Card */}
+          <Card className="lg:col-span-2 flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Target className="h-4 w-4 text-primary" />
                   {t("vocabulary.bookDetail.overview")}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row items-center gap-8">
+              <CardContent className="flex-1 flex flex-col">
+                <div className="flex flex-col sm:flex-row items-center gap-5">
                   {/* Progress Ring */}
                   <ProgressRing
                     progress={masteredPercent}
@@ -302,28 +403,28 @@ export function VocabularyBookDetail() {
                   />
 
                   {/* Stats Breakdown */}
-                  <div className="flex-1 grid grid-cols-3 gap-4 w-full">
-                    <div className="text-center p-4 rounded-lg bg-emerald-50">
-                      <CheckCircle2 className="h-6 w-6 mx-auto text-emerald-600 mb-2" />
-                      <p className="text-2xl font-bold text-emerald-700">{book.stats.mastered}</p>
+                  <div className="flex-1 grid grid-cols-3 gap-3 w-full">
+                    <div className="text-center p-3 rounded-lg bg-emerald-50">
+                      <CheckCircle2 className="h-5 w-5 mx-auto text-emerald-600 mb-1.5" />
+                      <p className="text-xl font-bold text-emerald-700">{book.stats.mastered}</p>
                       <p className="text-xs text-emerald-600">{t("vocabulary.bookDetail.mastered")}</p>
                     </div>
-                    <div className="text-center p-4 rounded-lg bg-amber-50">
-                      <Brain className="h-6 w-6 mx-auto text-amber-600 mb-2" />
-                      <p className="text-2xl font-bold text-amber-700">{book.stats.learning}</p>
+                    <div className="text-center p-3 rounded-lg bg-amber-50">
+                      <BookOpen className="h-5 w-5 mx-auto text-amber-600 mb-1.5" />
+                      <p className="text-xl font-bold text-amber-700">{book.stats.learning}</p>
                       <p className="text-xs text-amber-600">{t("vocabulary.bookDetail.learning")}</p>
                     </div>
-                    <div className="text-center p-4 rounded-lg bg-slate-50">
-                      <Sparkles className="h-6 w-6 mx-auto text-slate-600 mb-2" />
-                      <p className="text-2xl font-bold text-slate-700">{book.stats.newWords}</p>
+                    <div className="text-center p-3 rounded-lg bg-slate-50">
+                      <Sparkles className="h-5 w-5 mx-auto text-slate-600 mb-1.5" />
+                      <p className="text-xl font-bold text-slate-700">{book.stats.newWords}</p>
                       <p className="text-xs text-slate-600">{t("vocabulary.bookDetail.new")}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="mt-6">
-                  <div className="flex justify-between text-sm mb-2">
+                <div className="mt-4">
+                  <div className="flex justify-between text-sm mb-1.5">
                     <span className="text-text-secondary">
                       {t("vocabulary.wordsCount", { count: book.stats.totalWords })}
                     </span>
@@ -331,7 +432,7 @@ export function VocabularyBookDetail() {
                   <TooltipProvider delayDuration={0}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="h-3 bg-neutral-border rounded-full overflow-hidden flex">
+                        <div className="h-2.5 bg-neutral-border rounded-full overflow-hidden flex">
                           <motion.div
                             className="bg-emerald-500 h-full"
                             initial={{ width: 0 }}
@@ -359,7 +460,7 @@ export function VocabularyBookDetail() {
                             <span>{t("vocabulary.bookDetail.mastered")}: {masteredPercent}%</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Brain className="h-4 w-4 text-amber-600" />
+                            <BookOpen className="h-4 w-4 text-amber-600" />
                             <span>{t("vocabulary.bookDetail.learning")}: {learningPercent}%</span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -371,84 +472,116 @@ export function VocabularyBookDetail() {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
+
+                {/* Estimated Completion Time */}
+                {remainingWords > 0 && (
+                  <div className="mt-3 pt-3 border-t border-neutral-border">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-3.5 w-3.5 text-text-secondary" />
+                        <span className="text-xs text-text-secondary">
+                          {t("vocabulary.bookDetail.estimatedCompletion")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-text-primary">
+                          {getEstimatedCompletionText()}
+                        </span>
+                        <span className="text-xs text-text-tertiary">
+                          {t("vocabulary.bookDetail.estimatedCompletionAtPace")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Target className="h-4 w-4 text-primary" />
-                  {t("vocabulary.bookDetail.forgettingCurve")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-3 text-xs text-text-secondary">{t("vocabulary.bookDetail.retentionProbability")}</div>
+          {/* Today's Learning Plan Card - same row as Overview */}
+          <Card className="flex flex-col">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Calendar className="h-4 w-4 text-primary" />
+                {t("vocabulary.bookDetail.todayPlan")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col justify-between">
+              <div className="space-y-4">
+                {/* Learning Content */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <span className="text-sm text-text-secondary">
+                        {t("vocabulary.bookDetail.wordsToReview", { count: book.stats.todayReview })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-amber-600" />
+                      <span className="text-sm text-text-secondary">
+                        {t("vocabulary.bookDetail.newWordsToday", { count: book.stats.todayNew })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Estimated Time */}
+                <div className="pt-2 border-t border-neutral-border">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-text-secondary" />
+                    <span className="text-sm text-text-secondary">
+                      {t("vocabulary.bookDetail.estimatedTime", { minutes: book.stats.estimatedMinutes })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Start Learning Button */}
+              <Button
+                onClick={handleStartLearning}
+                className="w-full mt-4 gap-2"
+              >
+                <PlayCircle className="h-4 w-4" />
+                {t("vocabulary.bookDetail.startSession")}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Row 2: Forgetting Curve Chart */}
+          <Card className="lg:col-span-2 flex flex-col">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                {t("vocabulary.bookDetail.forgettingCurve")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2 pb-4 flex-1 flex flex-col min-h-0">
+              <div className="mb-2 text-xs text-text-secondary">{t("vocabulary.bookDetail.retentionProbability")}</div>
+              <div className="flex-1 min-h-[280px]">
                 <ForgettingCurveChart
                   masteredS={30}
                   learningS={7}
                   newS={2}
                   days={30}
-                  width={320}
-                  height={160}
                 />
-                <div className="mt-3 text-xs text-text-tertiary">{t("vocabulary.bookDetail.fsrsHint")}</div>
-              </CardContent>
-            </Card>
-
-            {/* Today's Goal Card moved to right column */}
-          </div>
+              </div>
+              <div className="mt-2 text-xs text-text-tertiary">{t("vocabulary.bookDetail.fsrsHint")}</div>
+            </CardContent>
+          </Card>
 
           {/* Right Column - Stats & Words */}
           <div className="space-y-lg">
-            {/* Today's Goal Card (compact, top-right) */}
-            <Card className={cn("relative overflow-hidden", book.coverColor)}>
-              <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-black/5 to-transparent" />
-              <CardContent className="relative p-4 text-white">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-semibold mb-1 flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {t("vocabulary.bookDetail.todayGoal")}
-                    </h3>
-                    <div className="text-xs text-white/90 truncate flex items-center gap-2">
-                      <span className="flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        {t("vocabulary.bookDetail.wordsToReview", { count: book.stats.todayReview })}
-                      </span>
-                      <span className="opacity-60">•</span>
-                      <span className="flex items-center gap-1">
-                        <Sparkles className="h-3.5 w-3.5" />
-                        {t("vocabulary.bookDetail.newWordsToday", { count: book.stats.todayNew })}
-                      </span>
-                      <span className="opacity-60">•</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        {t("vocabulary.bookDetail.estimatedTime", { minutes: book.stats.estimatedMinutes })}
-                      </span>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={handleStartLearning}
-                    className="bg-white text-primary hover:bg-white/90 gap-1 shadow-md h-8 px-2"
-                    size="sm"
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    <span className="hidden md:inline">{t("vocabulary.bookDetail.startSession")}</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-
             {/* Recent Words */}
             <Card>
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-1">
                 <CardTitle className="text-base flex items-center gap-2">
                   <GraduationCap className="h-4 w-4 text-primary" />
                   {t("vocabulary.bookDetail.recentWords")}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="py-2">
                 {book.recentWords.map((word, index) => (
                   <WordListItem key={word.id} word={word} index={index} />
                 ))}
@@ -457,13 +590,13 @@ export function VocabularyBookDetail() {
 
             {/* Difficult Words */}
             <Card>
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-1">
                 <CardTitle className="text-base flex items-center gap-2 text-amber-600">
                   <Brain className="h-4 w-4" />
                   {t("vocabulary.bookDetail.difficult")}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="py-2">
                 {book.difficultWords.map((word, index) => (
                   <WordListItem key={word.id} word={word} index={index} />
                 ))}
