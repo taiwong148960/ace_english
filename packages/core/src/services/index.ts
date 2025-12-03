@@ -52,3 +52,18 @@ export {
 } from "./vocabulary"
 export type { IVocabularyApi } from "./vocabulary"
 
+// FSRS Spaced Repetition
+export { FSRSScheduler, fsrsScheduler, createInitialWordProgress, stateToMasteryLevel } from "./fsrs"
+
+// Vocabulary Detail
+export {
+  getBookWithDetails,
+  getTodayLearningSession,
+  getRecentWords,
+  getDifficultWords,
+  processWordReview,
+  initializeBookProgress,
+  getWordSchedulePreview,
+  formatNextReview
+} from "./vocabulary-detail"
+

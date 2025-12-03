@@ -25,9 +25,25 @@ export type {
   CreateVocabularyBookInput,
   UpdateVocabularyBookInput,
   SpacedRepetitionGrade,
-  ReviewResult
+  ReviewResult,
+  // FSRS types
+  FSRSState,
+  FSRSRating,
+  FSRSParameters,
+  ReviewLog,
+  BookDetailStats,
+  WordWithProgress,
+  TodayLearningSession,
+  SchedulingResult
 } from "./vocabulary"
-export { BOOK_COVER_COLORS, DEFAULT_BOOK_COVER_COLOR } from "./vocabulary"
+export {
+  BOOK_COVER_COLORS,
+  DEFAULT_BOOK_COVER_COLOR,
+  GRADE_TO_RATING,
+  DEFAULT_FSRS_PARAMS,
+  LEARNING_STEPS,
+  LEARNING_GRADUATION_STEPS
+} from "./vocabulary"
 
 /**
  * User profile information

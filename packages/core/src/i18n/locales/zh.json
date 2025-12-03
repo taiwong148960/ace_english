@@ -158,7 +158,7 @@
       "new": "未学习",
       "forgettingCurve": "遗忘曲线",
       "retentionProbability": "记忆保持概率",
-      "fsrsHint": "后续将基于 FSRS 间隔重复优化",
+      "fsrsHint": "基于 FSRS-4.5 间隔重复算法",
       "xAxisLabel": "天数",
       "yAxisLabel": "记忆保持率",
       "tooltipDays": "{{days}} 天",
@@ -177,7 +177,9 @@
       "estimatedCompletionDays": "约 {{days}} 天",
       "estimatedCompletionWeeks": "约 {{weeks}} 周",
       "estimatedCompletionMonths": "约 {{months}} 个月",
-      "estimatedCompletionAtPace": "按当前进度"
+      "estimatedCompletionAtPace": "按当前进度",
+      "noRecentWords": "暂无学习记录",
+      "noDifficultWords": "暂无困难词汇"
     },
     "learning": {
       "wordCard": "单词卡片",

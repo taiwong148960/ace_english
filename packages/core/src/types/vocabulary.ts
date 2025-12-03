@@ -1,6 +1,7 @@
 /**
  * Vocabulary Types
  * Type definitions for vocabulary books and words
+ * Includes FSRS (Free Spaced Repetition Scheduler) compatible types
  */
 
 /**
@@ -9,9 +10,34 @@
 export type VocabularyBookType = "ielts" | "academic" | "business" | "custom"
 
 /**
- * Word mastery level for spaced repetition
+ * Word mastery level for spaced repetition (legacy)
  */
 export type WordMasteryLevel = "new" | "learning" | "reviewing" | "mastered"
+
+/**
+ * FSRS Card State
+ * - new: Never reviewed
+ * - learning: In short-term learning phase (minutes-based)
+ * - review: Graduated to long-term review (days-based)
+ * - relearning: Failed review, back to learning phase
+ */
+export type FSRSState = "new" | "learning" | "review" | "relearning"
+
+/**
+ * FSRS Rating (1-4 scale)
+ * 1 = Again (forgot), 2 = Hard, 3 = Good, 4 = Easy
+ */
+export type FSRSRating = 1 | 2 | 3 | 4
+
+/**
+ * Map UI grade to FSRS rating
+ */
+export const GRADE_TO_RATING: Record<SpacedRepetitionGrade, FSRSRating> = {
+  forgot: 1,
+  hard: 2,
+  good: 3,
+  easy: 4
+}
 
 /**
  * Vocabulary book - represents a collection of words
@@ -46,22 +72,67 @@ export interface VocabularyWord {
 }
 
 /**
- * User's progress on a specific word
+ * User's progress on a specific word (FSRS-compatible)
  */
 export interface UserWordProgress {
   id: string
   user_id: string
   word_id: string
   book_id: string
-  mastery_level: WordMasteryLevel
-  review_count: number
-  correct_count: number
-  last_reviewed_at: string | null
-  next_review_at: string | null
-  ease_factor: number // For SM-2 algorithm
-  interval_days: number // Days until next review
+  
+  // FSRS Core Parameters
+  state: FSRSState
+  difficulty: number      // D: [0, 10], initial difficulty
+  stability: number       // S: memory stability in days
+  retrievability: number  // R: probability of recall (0-1)
+  
+  // FSRS Card State
+  elapsed_days: number    // Days since last review
+  scheduled_days: number  // Days until next review
+  reps: number            // Total successful review count
+  lapses: number          // Times forgotten (Again count)
+  
+  // Short-term Learning Phase
+  learning_step: number   // Current step in learning sequence (0, 1, 2...)
+  is_learning_phase: boolean // In short-term phase (minutes)
+  
+  // Scheduling
+  last_review_at: string | null   // Last review timestamp
+  due_at: string                  // When this card is due for review
+  
+  // Statistics
+  total_reviews: number
+  correct_reviews: number
+  
   created_at: string
   updated_at: string
+}
+
+/**
+ * Review log entry for analytics
+ */
+export interface ReviewLog {
+  id: string
+  user_id: string
+  word_id: string
+  book_id: string
+  progress_id: string
+  
+  rating: FSRSRating
+  state_before: FSRSState
+  state_after: FSRSState
+  
+  difficulty_before: number
+  stability_before: number
+  difficulty_after: number
+  stability_after: number
+  
+  scheduled_days: number
+  elapsed_days: number
+  review_time_ms?: number
+  
+  reviewed_at: string
+  created_at: string
 }
 
 /**
@@ -77,9 +148,53 @@ export interface UserBookProgress {
   last_studied_at: string | null
   streak_days: number
   accuracy_percent: number
+  
+  // Daily limits and counters
+  total_reviews: number
+  reviews_today: number
+  new_words_today: number
+  last_review_date: string | null
+  daily_new_limit: number
+  daily_review_limit: number
+  
   created_at: string
   updated_at: string
 }
+
+/**
+ * FSRS Parameters (configurable)
+ */
+export interface FSRSParameters {
+  requestRetention: number      // Target retention rate (default: 0.9)
+  maximumInterval: number       // Max days between reviews (default: 365)
+  w: number[]                   // Weight parameters for FSRS-4.5
+}
+
+/**
+ * Default FSRS parameters (FSRS-4.5)
+ */
+export const DEFAULT_FSRS_PARAMS: FSRSParameters = {
+  requestRetention: 0.9,
+  maximumInterval: 365,
+  // FSRS-4.5 default weights
+  w: [0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61]
+}
+
+/**
+ * Learning phase steps (in minutes)
+ * Users must pass through these before entering day-based scheduling
+ */
+export const LEARNING_STEPS: Record<FSRSRating, number> = {
+  1: 1,    // Again: 1 minute
+  2: 5,    // Hard: 5 minutes  
+  3: 10,   // Good: 10 minutes
+  4: 60    // Easy: 1 hour (skip to next step or graduate)
+}
+
+/**
+ * Number of steps required to graduate from learning phase
+ */
+export const LEARNING_GRADUATION_STEPS = 2
 
 /**
  * Combined book data with user progress
@@ -149,3 +264,59 @@ export const BOOK_COVER_COLORS = [
  * Default cover color for new books
  */
 export const DEFAULT_BOOK_COVER_COLOR = BOOK_COVER_COLORS[3]
+
+/**
+ * Book detail statistics
+ */
+export interface BookDetailStats {
+  totalWords: number
+  mastered: number
+  learning: number
+  newWords: number
+  todayReview: number
+  todayNew: number
+  estimatedMinutes: number
+  streak: number
+  accuracy: number
+  averageStability: number
+}
+
+/**
+ * Word with progress info for display
+ */
+export interface WordWithProgress {
+  id: string
+  word: string
+  phonetic: string | null
+  definition: string | null
+  state: FSRSState
+  stability: number
+  due_at: string | null
+  last_review_at: string | null
+  lapses: number
+}
+
+/**
+ * Today's learning session data
+ */
+export interface TodayLearningSession {
+  reviewWords: WordWithProgress[]
+  newWords: WordWithProgress[]
+  totalCount: number
+  estimatedMinutes: number
+}
+
+/**
+ * Scheduling result from FSRS calculation
+ */
+export interface SchedulingResult {
+  state: FSRSState
+  difficulty: number
+  stability: number
+  retrievability: number
+  elapsed_days: number
+  scheduled_days: number
+  due_at: Date
+  learning_step: number
+  is_learning_phase: boolean
+}

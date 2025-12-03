@@ -158,7 +158,7 @@
       "new": "New",
       "forgettingCurve": "Forgetting Curve",
       "retentionProbability": "Retention Probability",
-      "fsrsHint": "Will be optimized with FSRS spaced repetition",
+      "fsrsHint": "Powered by FSRS-4.5 spaced repetition algorithm",
       "xAxisLabel": "Days",
       "yAxisLabel": "Retention Rate",
       "tooltipDays": "{{days}} days",
@@ -177,7 +177,9 @@
       "estimatedCompletionDays": "~{{days}} days",
       "estimatedCompletionWeeks": "~{{weeks}} weeks",
       "estimatedCompletionMonths": "~{{months}} months",
-      "estimatedCompletionAtPace": "at current pace"
+      "estimatedCompletionAtPace": "at current pace",
+      "noRecentWords": "No words learned yet",
+      "noDifficultWords": "No difficult words yet"
     },
     "learning": {
       "wordCard": "Word Card",
