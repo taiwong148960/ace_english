@@ -1,7 +1,7 @@
 /**
  * @ace-ielts/core
  * Shared core package for AceIELTS application
- * Contains types, services, hooks, i18n, utils, and platform adapters
+ * Contains types, services, hooks, i18n, utils, config, and platform adapters
  */
 
 // Types
@@ -15,6 +15,9 @@ export * from "./utils"
 
 // Hooks
 export * from "./hooks"
+
+// Config (Deployment modes, feature flags)
+export * from "./config"
 
 // TanStack Query
 export { QueryClient, QueryClientProvider, createQueryClient, queryKeys } from "./query"

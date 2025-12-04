@@ -51,7 +51,7 @@ function ErrorState({ message }: { message: string }) {
 
 /**
  * Shared Dashboard page component
- * Works across both Extension and Web platforms via useNavigation adapter
+ * Works across Web and Desktop platforms via useNavigation adapter
  */
 export function Dashboard() {
   const { t } = useTranslation()

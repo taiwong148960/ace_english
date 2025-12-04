@@ -1,14 +1,15 @@
 ---
 alwaysApply: true
 ---
+
 ## Platform Adapter Pattern
 
 The adapter pattern enables code sharing across platforms with different runtime APIs.
 
-### Core Adapter Interfaces (defined in `@ace-english/core/adapters`)
+### Core Adapter Interfaces (defined in `@ace-ielts/core/adapters`)
 
 ```typescript
-export type Platform = "web" | "extension"
+export type Platform = "web" | "desktop" | "mobile"
 
 export interface IStorageAdapter {
   get<T>(key: string): Promise<T | null>
@@ -45,20 +46,30 @@ export interface IPlatformContext {
 **1. Each app implements its own adapters in `src/adapters/`:**
 
 ```typescript
-// app/extension/src/adapters/storage.ts
-export const chromeStorageAdapter: IStorageAdapter = {
-  async get<T>(key: string) {
-    const result = await chrome.storage.local.get(key)
-    return result[key] ?? null
-  },
-  // ...
-}
-
 // app/web/src/adapters/storage.ts
 export const webStorageAdapter: IStorageAdapter = {
   async get<T>(key: string) {
     const item = localStorage.getItem(key)
     return item ? JSON.parse(item) : null
+  },
+  async set<T>(key: string, value: T) {
+    localStorage.setItem(key, JSON.stringify(value))
+  },
+  // ...
+}
+
+// app/desktop/src/adapters/storage.ts
+import { Store } from '@tauri-apps/plugin-store'
+
+export const desktopStorageAdapter: IStorageAdapter = {
+  async get<T>(key: string) {
+    const store = await Store.load('settings.json')
+    return await store.get<T>(key)
+  },
+  async set<T>(key: string, value: T) {
+    const store = await Store.load('settings.json')
+    await store.set(key, value)
+    await store.save()
   },
   // ...
 }
@@ -67,14 +78,6 @@ export const webStorageAdapter: IStorageAdapter = {
 **2. Apps create platform context:**
 
 ```typescript
-// app/extension/src/adapters/index.ts
-export const extensionPlatformContext: IPlatformContext = {
-  platform: "extension",
-  storage: chromeStorageAdapter,
-  navigation: chromeNavigationAdapter,
-  environment: chromeEnvironmentAdapter
-}
-
 // app/web/src/adapters/index.ts
 export const webPlatformContext: IPlatformContext = {
   platform: "web",
@@ -82,18 +85,26 @@ export const webPlatformContext: IPlatformContext = {
   navigation: webNavigationAdapter,
   environment: webEnvironmentAdapter
 }
+
+// app/desktop/src/adapters/index.ts
+export const desktopPlatformContext: IPlatformContext = {
+  platform: "desktop",
+  storage: desktopStorageAdapter,
+  navigation: desktopNavigationAdapter,
+  environment: desktopEnvironmentAdapter
+}
 ```
 
 **3. Wrap app with PlatformProvider:**
 
 ```tsx
 // In app entry point
-import { PlatformProvider } from "@ace-english/core"
-import { extensionPlatformContext } from "./adapters"
+import { PlatformProvider } from "@ace-ielts/core"
+import { webPlatformContext } from "./adapters"
 
 function App() {
   return (
-    <PlatformProvider context={extensionPlatformContext}>
+    <PlatformProvider context={webPlatformContext}>
       <Dashboard />
     </PlatformProvider>
   )
@@ -103,15 +114,15 @@ function App() {
 **4. Use hooks in shared components:**
 
 ```tsx
-// In @ace-english/ui pages/components
-import { usePlatform, useStorage, useNavigation } from "@ace-english/core"
+// In @ace-ielts/ui pages/components
+import { usePlatform, useStorage, useNavigation } from "@ace-ielts/core"
 
 function MyComponent() {
   const { platform } = usePlatform()
   const storage = useStorage()
   const navigation = useNavigation()
   
-  // Works on both platforms!
+  // Works on all platforms!
 }
 ```
 
@@ -123,20 +134,21 @@ function MyComponent() {
 
 | Code Type | Location | Package |
 |-----------|----------|---------|
-| TypeScript interfaces/types | `packages/core/src/types/` | `@ace-english/core` |
-| API service functions | `packages/core/src/services/` | `@ace-english/core` |
-| Custom React hooks | `packages/core/src/hooks/` | `@ace-english/core` |
-| i18n translations | `packages/core/src/i18n/locales/` | `@ace-english/core` |
-| Utility functions | `packages/core/src/utils/` | `@ace-english/core` |
-| shadcn/ui components | `packages/ui/src/components/` | `@ace-english/ui` |
-| Layout components | `packages/ui/src/layout/` | `@ace-english/ui` |
-| Shared pages | `packages/ui/src/pages/` | `@ace-english/ui` |
-| Dashboard widgets | `packages/ui/src/dashboard/` | `@ace-english/ui` |
-| Extension popup | `app/extension/src/popup.tsx` | `@ace-english/extension` |
-| Extension tabs | `app/extension/src/tabs/` | `@ace-english/extension` |
-| Extension background | `app/extension/src/background.ts` | `@ace-english/extension` |
-| Web routes/pages | `app/web/src/pages/` | `@ace-english/web` |
-| Platform adapters | `app/[platform]/src/adapters/` | App-specific |
+| TypeScript interfaces/types | `packages/core/src/types/` | `@ace-ielts/core` |
+| API service functions | `packages/core/src/services/` | `@ace-ielts/core` |
+| Custom React hooks | `packages/core/src/hooks/` | `@ace-ielts/core` |
+| i18n translations | `packages/core/src/i18n/locales/` | `@ace-ielts/core` |
+| Utility functions | `packages/core/src/utils/` | `@ace-ielts/core` |
+| Deployment config | `packages/core/src/config/` | `@ace-ielts/core` |
+| shadcn/ui components | `packages/ui/src/components/` | `@ace-ielts/ui` |
+| Layout components | `packages/ui/src/layout/` | `@ace-ielts/ui` |
+| Shared pages | `packages/ui/src/pages/` | `@ace-ielts/ui` |
+| Dashboard widgets | `packages/ui/src/dashboard/` | `@ace-ielts/ui` |
+| Web routes/pages | `app/web/src/pages/` | `@ace-ielts/web` |
+| Web adapters | `app/web/src/adapters/` | `@ace-ielts/web` |
+| Desktop entry | `app/desktop/src/main.tsx` | `@ace-ielts/desktop` |
+| Desktop adapters | `app/desktop/src/adapters/` | `@ace-ielts/desktop` |
+| Tauri config | `app/desktop/src-tauri/` | Tauri (Rust) |
 
 ### Barrel Export Pattern
 
@@ -154,6 +166,47 @@ Update the barrel file whenever adding new modules.
 
 ---
 
+## Project Structure
+
+```
+ace-ielts/
+├── packages/
+│   ├── core/                 # Shared logic, types, services, hooks
+│   │   └── src/
+│   │       ├── adapters/     # Platform adapter interfaces & context
+│   │       ├── config/       # Deployment & app configuration
+│   │       ├── hooks/        # React Query hooks
+│   │       ├── i18n/         # Internationalization
+│   │       ├── services/     # API/Supabase services
+│   │       ├── types/        # TypeScript interfaces
+│   │       └── utils/        # Utility functions
+│   └── ui/                   # Shared UI components & pages
+│       └── src/
+│           ├── components/   # shadcn/ui components
+│           ├── dashboard/    # Dashboard widgets
+│           ├── layout/       # Layout components
+│           └── pages/        # Shared pages
+├── app/
+│   ├── web/                  # Web application (Vite)
+│   │   └── src/
+│   │       ├── adapters/     # Web-specific adapters
+│   │       ├── pages/        # Web-only pages
+│   │       └── main.tsx      # Entry point
+│   └── desktop/              # Desktop application (Tauri)
+│       ├── src/              # React frontend
+│       │   ├── adapters/     # Desktop-specific adapters
+│       │   └── main.tsx      # Entry point
+│       └── src-tauri/        # Rust backend
+│           ├── src/
+│           │   └── main.rs   # Tauri entry
+│           ├── Cargo.toml
+│           └── tauri.conf.json
+└── supabase/
+    └── migrations/           # Database migrations
+```
+
+---
+
 ## Scripts & Commands
 
 ### Root-Level Scripts (run from project root)
@@ -161,11 +214,11 @@ Update the barrel file whenever adding new modules.
 ```bash
 # Development
 pnpm dev:web          # Start web dev server (Vite)
-pnpm dev:extension    # Start extension dev (Plasmo)
+pnpm dev:desktop      # Start desktop dev (Tauri)
 
 # Build
 pnpm build:web        # Build web app
-pnpm build:extension  # Build extension
+pnpm build:desktop    # Build desktop app
 pnpm build:all        # Build all packages
 
 # Quality
@@ -174,16 +227,63 @@ pnpm typecheck        # Type-check all packages
 
 # Utilities
 pnpm clean            # Clean all build artifacts
-pnpm package:extension # Package extension for distribution
+pnpm package:desktop  # Package desktop for distribution
 ```
 
 ### Running Commands in Specific Packages
 
 ```bash
-pnpm --filter @ace-english/core <command>
-pnpm --filter @ace-english/ui <command>
-pnpm --filter @ace-english/web <command>
-pnpm --filter @ace-english/extension <command>
+pnpm --filter @ace-ielts/core <command>
+pnpm --filter @ace-ielts/ui <command>
+pnpm --filter @ace-ielts/web <command>
+pnpm --filter @ace-ielts/desktop <command>
+```
+
+---
+
+## Desktop App (Tauri)
+
+### Tauri-Specific Rules
+- Use `@tauri-apps/api` for native OS features (file system, dialogs, etc.)
+- Use `@tauri-apps/plugin-*` for official plugins (store, shell, etc.)
+- **NEVER** use Node.js APIs directly - Tauri runs in a browser context
+- IPC between frontend and Rust uses the `invoke()` pattern
+
+### Common Tauri APIs
+```typescript
+// File system
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
+
+// Dialogs
+import { open, save } from '@tauri-apps/plugin-dialog'
+
+// Shell (open URLs)
+import { open as openUrl } from '@tauri-apps/plugin-shell'
+
+// Persistent storage
+import { Store } from '@tauri-apps/plugin-store'
+```
+
+### Desktop Navigation Adapter Example
+```typescript
+// app/desktop/src/adapters/navigation.ts
+import { open as openUrl } from '@tauri-apps/plugin-shell'
+
+export const desktopNavigationAdapter: INavigationAdapter = {
+  navigate(path: string) {
+    // Use React Router or window.location
+    window.location.hash = path
+  },
+  openExternal(url: string) {
+    openUrl(url)  // Opens in default browser
+  },
+  getCurrentPath() {
+    return window.location.hash.slice(1) || '/'
+  },
+  goBack() {
+    window.history.back()
+  }
+}
 ```
 
 ---
@@ -202,10 +302,10 @@ All packages extend from root `tsconfig.base.json`:
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "paths": {
-      "@ace-english/core": ["packages/core/src"],
-      "@ace-english/core/*": ["packages/core/src/*"],
-      "@ace-english/ui": ["packages/ui/src"],
-      "@ace-english/ui/*": ["packages/ui/src/*"]
+      "@ace-ielts/core": ["packages/core/src"],
+      "@ace-ielts/core/*": ["packages/core/src/*"],
+      "@ace-ielts/ui": ["packages/ui/src"],
+      "@ace-ielts/ui/*": ["packages/ui/src/*"]
     }
   }
 }
@@ -238,7 +338,7 @@ All packages extend from root `tsconfig.base.json`:
 
 1. Create component in `packages/ui/src/components/NewComponent.tsx`
 2. Export from `packages/ui/src/components/index.ts`
-3. Import in apps: `import { NewComponent } from "@ace-english/ui"`
+3. Import in apps: `import { NewComponent } from "@ace-ielts/ui"`
 
 ### Adding a New Shared Page
 
@@ -257,8 +357,8 @@ All packages extend from root `tsconfig.base.json`:
 
 1. Define interface in `packages/core/src/adapters/types.ts`
 2. Add to `IPlatformContext` interface
-3. Implement in `app/extension/src/adapters/`
-4. Implement in `app/web/src/adapters/`
+3. Implement in `app/web/src/adapters/`
+4. Implement in `app/desktop/src/adapters/`
 5. Add hook in `packages/core/src/adapters/context.tsx`
 
 ---
@@ -272,13 +372,14 @@ All packages extend from root `tsconfig.base.json`:
 - ✅ Use `workspace:*` for internal dependencies
 - ✅ Run `pnpm typecheck` before committing
 - ✅ Keep apps as thin wrappers around shared code
+- ✅ Use Tauri plugins for native features in desktop app
 
 ### DON'T:
 - ❌ Import from `app/*` in `packages/*`
-- ❌ Use `chrome.*` APIs directly in shared packages
-- ❌ Use `localStorage` directly in shared packages
+- ❌ Use `localStorage` directly in shared packages (use storage adapter)
+- ❌ Use Node.js APIs in Tauri frontend code
 - ❌ Create circular dependencies
-- ❌ Duplicate code between web and extension
+- ❌ Duplicate code between web and desktop
 - ❌ Use relative imports across package boundaries
 
 ---
@@ -296,10 +397,10 @@ This project uses **pnpm** exclusively.
 pnpm install
 
 # Add dependency to specific package
-pnpm --filter @ace-english/ui add <package-name>
+pnpm --filter @ace-ielts/ui add <package-name>
 
 # Add dev dependency
-pnpm --filter @ace-english/core add -D <package-name>
+pnpm --filter @ace-ielts/core add -D <package-name>
 
 # Add to root (shared dev tools)
 pnpm add -D -w <package-name>

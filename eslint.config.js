@@ -11,7 +11,6 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/dist/**",
       "**/build/**",
-      "**/.plasmo/**",
       "**/coverage/**",
       "**/*.config.js",
       "**/*.config.cjs",
@@ -20,6 +19,7 @@ export default tseslint.config(
       "**/tailwind.config.*",
       "**/vite.config.*",
       "commitlint.config.js",
+      "**/src-tauri/**",
     ],
   },
 

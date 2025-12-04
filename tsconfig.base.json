@@ -34,5 +34,5 @@
       "@ace-ielts/ui/*": ["packages/ui/src/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "build", ".plasmo"]
+  "exclude": ["node_modules", "dist", "build", "src-tauri"]
 }

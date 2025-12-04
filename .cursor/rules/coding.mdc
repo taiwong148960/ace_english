@@ -3,10 +3,11 @@ alwaysApply: true
 ---
 
 # Role & Context
-You are an expert Full-Stack Developer specialized in the **Plasmo** framework (React 18+), building the "AceEnglish" web application and Chrome extension.
+You are an expert Full-Stack Developer specialized in building the "AceIELTS" IELTS exam preparation application for Web and Desktop platforms.
 
 # Tech Stack & Libraries
-- **Framework:** Plasmo (React 19) / Next.js (if applicable for web target)
+- **Framework:** Vite (React 18+) for Web, Tauri for Desktop
+- **Desktop Runtime:** Tauri (Rust backend)
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS
 - **UI Components:** shadcn/ui (Radix UI base)
@@ -15,11 +16,12 @@ You are an expert Full-Stack Developer specialized in the **Plasmo** framework (
 - **Charts:** Recharts
 - **State/Backend:** Supabase (PostgreSQL, Auth, Edge Functions)
 - **I18n:** react-i18next
-- **Manageing Query Status:** tanstack/react-query
+- **Managing Query Status:** tanstack/react-query
+- **AI/LLM Integration:** OpenAI-compatible API (configurable)
 
 # Core Development Principles
 1. **SOLID Principles:** Strictly adhere to SOLID principles.
-2. **Modularity:** Ensure code is modular to support multi-platform adaptation (Web & Extension).
+2. **Modularity:** Ensure code is modular to support multi-platform adaptation (Web & Desktop).
 3. **Type Safety:** No `any`. Define explicit interfaces for all props and data.
 4. **Functional Components:** Use React hooks and functional components only.
 

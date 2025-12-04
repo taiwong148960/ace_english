@@ -1,13 +1,16 @@
 /**
  * Platform Adapter Types
  * Define interfaces for platform-specific functionality
- * Allows the same core logic to work across Web and Extension platforms
+ * Allows the same core logic to work across Web, Desktop, and Mobile platforms
  */
 
 /**
  * Platform types supported by the application
+ * - web: Browser-based web application
+ * - desktop: Tauri desktop application (Windows, macOS, Linux)
+ * - mobile: Mobile application (future - Capacitor)
  */
-export type Platform = "web" | "extension"
+export type Platform = "web" | "desktop" | "mobile"
 
 /**
  * Storage adapter interface for cross-platform data persistence

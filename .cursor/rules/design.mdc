@@ -2,45 +2,65 @@
 alwaysApply: true
 ---
 
-# Design System Tokens (AceEnglish)
+# Design System Tokens (AceIELTS)
 
 Refer to these specific values when styling components:
 
 ## Color Palette
-- **Primary Main:** `#-2E7569` (Tailwind: `primary`)
-- **Primary Hover:** `#-2B5C52`
+- **Primary Main:** `#0E7569` (Tailwind: `primary`)
+- **Primary Hover:** `#0B5C52`
 - **Background:** `#F6F9FA` (Neutral/Gray-50)
 - **Card Bg:** `#FFFFFF`
-- **Text Primary:** `#-1F2937` (Gray-800)
-- **Text Secondary:** `#4B7280` (Gray-500)
-- **Accents:**
-  - Listening: `#3B8FD9`
-  - Reading: `#2CAF85`
-  - Writing: `#9573CD`
-  - Speaking: `#D2A054`
+- **Text Primary:** `#1F2937` (Gray-800)
+- **Text Secondary:** `#4B5563` (Gray-600)
+- **Text Tertiary:** `#6B7280` (Gray-500)
+- **IELTS Skill Accents:**
+  - Listening: `#3B82F6` (Blue)
+  - Reading: `#10B981` (Green)
+  - Writing: `#8B5CF6` (Purple)
+  - Speaking: `#F59E0B` (Amber)
 
 ## Typography
 - **Display:** 46px, Bold (700), `DM Serif Display`
-- **H-1:** 28px, Bold (700)
-- **H0:** 20px, SemiBold (600)
-- **Body:** 12px, Regular (400)
-- **Small:** 10px, Medium (500)
+- **H1:** 28px, Bold (700)
+- **H2:** 24px, SemiBold (600)
+- **H3:** 20px, SemiBold (600)
+- **Body:** 14px, Regular (400)
+- **Small:** 12px, Medium (500)
+- **Caption:** 10px, Medium (500)
 
 ## Spacing & Layout
-- **Base Unit:** 6px
-- **Card Padding:** 22px (`p-6`)
-- **Gap:** 22px (`gap-6`)
-- **Sidebar Width:** 258px
+- **Base Unit:** 4px
+- **Card Padding:** 24px (`p-6`)
+- **Gap:** 24px (`gap-6`)
+- **Sidebar Width:** 256px
+- **Max Content Width:** 1280px (`max-w-7xl`)
 
 ## Component Specifics
-- **Buttons:**
-  - Default: bg-[#-2E7569] text-white hover:bg-[#0B5C52] rounded-md px-5 py-2.5
-  - Ghost: text-[#4B7280] hover:bg-[#E0F7FA] hover:text-[#0E7569]
-- **Cards:**
-  - Bg: White
-  - Shadow: `-2px 1px 3px rgba(0,0,0,0.04)`
-  - Border: None (unless specified)
-  - Radius: 10px (`rounded-xl`)
-- **Input Focus Ring:**
-  - Color: `#-2E7569`
-  - Style: `ring-4 ring-primary ring-offset-2`
+
+### Buttons
+- **Primary:** `bg-primary text-white hover:bg-primary-hover rounded-lg px-5 py-2.5`
+- **Secondary:** `bg-white text-primary border border-primary hover:bg-primary/5 rounded-lg px-5 py-2.5`
+- **Ghost:** `text-text-secondary hover:bg-neutral-100 hover:text-primary rounded-lg px-4 py-2`
+
+### Cards
+- **Background:** White
+- **Shadow:** `shadow-sm` or `0 1px 3px rgba(0,0,0,0.04)`
+- **Border:** None (unless specified)
+- **Radius:** 12px (`rounded-xl`)
+
+### Input Fields
+- **Border:** `border-neutral-200`
+- **Focus Ring:** `ring-2 ring-primary/20 border-primary`
+- **Radius:** 8px (`rounded-lg`)
+
+### Progress Indicators
+- **Background:** `bg-neutral-100`
+- **Fill:** Use skill accent colors for IELTS skills
+- **Height:** 8px (`h-2`)
+- **Radius:** Full (`rounded-full`)
+
+## IELTS Score Display
+- **Band Scores:** Display as X.0 or X.5 (e.g., 6.5, 7.0)
+- **Overall Score:** Emphasized with larger font and primary color
+- **Skill Scores:** Each skill uses its accent color

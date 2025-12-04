@@ -93,7 +93,7 @@ export const changeLanguage = async (lng: LanguageCode) => {
 }
 
 /**
- * Initialize i18n with async storage (for extension)
+ * Initialize i18n with async storage (for cross-platform support)
  */
 export const initI18nWithStorage = async () => {
   const stored = await storageAdapter.getLanguage()
